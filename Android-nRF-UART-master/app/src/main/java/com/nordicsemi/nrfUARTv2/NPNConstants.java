@@ -60,4 +60,9 @@ public class NPNConstants {
     public static final String CMD_CURTAIN_REAR_CENTER_DOWN = "CURTAIN_REAR_CENTER_DOWN";
     public static final String CMD_CURTAIN_REAR_CENTER_STOP = "CURTAIN_REAR_CENTER_STOP";
 
+    public static String SETTING_REFKEY_NAME = "dcar_settings";
+
+    public static String SETTING_BLE_MAC = "setting_tv_mac";
+
+
 }

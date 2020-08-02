@@ -306,7 +306,15 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
         imgDrawersLight = findViewById(R.id.imgDrawersLight);
         imgDrawersLight.setOnClickListener(this);
 
-//        btnSetting = findViewById(R.id.btnSetting);
+        btnSetting = findViewById(R.id.btnSetting);
+        btnSetting.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Intent newIntent = new Intent(MainActivity.this, DeviceListActivity.class);
+                startActivityForResult(newIntent, REQUEST_SELECT_DEVICE);
+                return true;
+            }
+        });
 //        btnSetting.setOnLongClickListener(new View.OnLongClickListener() {
 //            @Override
 //            public boolean onLongClick(View v) {
@@ -763,12 +771,38 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
     }
 
     private static final int REQ_CODE_SPEECH_INPUT = 100;
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
         switch (requestCode) {
-            case REQ_CODE_SPEECH_INPUT: {
+
+            case REQUEST_SELECT_DEVICE:
+                //When the DeviceListActivity return, with the selected device address
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    String deviceAddress = data.getStringExtra(BluetoothDevice.EXTRA_DEVICE);
+                    mDevice = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(deviceAddress);
+
+                    Log.d(TAG, "... onActivityResultdevice.address==" + mDevice + "mserviceValue" + mService);
+                    ((TextView) findViewById(R.id.deviceName)).setText(mDevice.getName()+ " - connecting");
+                    mService.connect(deviceAddress);
+
+                    Helper.saveTVCode((MainActivity)mContext, NPNConstants.SETTING_REFKEY_NAME, deviceAddress);
+                    
+                }
+                break;
+            case REQUEST_ENABLE_BT:
+                // When the request to enable Bluetooth returns
+                if (resultCode == Activity.RESULT_OK) {
+                    Toast.makeText(this, "Bluetooth has turned on ", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    // User did not enable Bluetooth or an error occurred
+                    Log.d(TAG, "BT not enabled");
+                    Toast.makeText(this, "Problem in BT Turning ON ", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                break;
+            case REQ_CODE_SPEECH_INPUT:
                 if (resultCode == RESULT_OK && null != data) {
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     if(result.size() > 0) {
@@ -779,19 +813,15 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
                         if((ubc_voice.indexOf("mở")>=0 && ubc_voice.indexOf("rèm")>=0)
                                 ||(ubc_voice.indexOf("mở")>=0 && ubc_voice.indexOf("game")>=0)
                                 ||(ubc_voice.indexOf("mở")>=0 && ubc_voice.indexOf("cửa")>=0)) {
-                            //((MainActivity)(getActivity())).sendKeyCommand("DCAR_CURTAIN_UP");
                             messageSocket = "DCAR_CURTAIN_UP";
                         }else if((ubc_voice.indexOf("đóng")>=0 && ubc_voice.indexOf("rèm")>=0)
                                 || (ubc_voice.indexOf("đón")>=0 && ubc_voice.indexOf("rằm")>=0)
                                 || (ubc_voice.indexOf("đóng")>=0 && ubc_voice.indexOf("cửa")>=0)){
-                            //((MainActivity)(getActivity())).sendKeyCommand("DCAR_CURTAIN_DOWN");
                             messageSocket = "DCAR_CURTAIN_DOWN";
                         }else if(ubc_voice.indexOf("tắt")>=0 && ubc_voice.indexOf("đèn")>=0) {
-                            //((MainActivity)(getActivity())).sendKeyCommand("DCAR_LED_OFF");
                             messageSocket = "DCAR_LED_OFF";
                         }else if(ubc_voice.indexOf("mở")>=0 && ubc_voice.indexOf("đèn")>=0||
                                 ubc_voice.indexOf("bật")>=0 && ubc_voice.indexOf("đèn")>=0){
-                            //((MainActivity)(getActivity())).sendKeyCommand("DCAR_LED_ON");
                             messageSocket = "DCAR_LED_ON";
                         }
                         else if(ubc_voice.indexOf("truyền hình") >=0 || ubc_voice.indexOf("kênh") >=0 || ubc_voice.indexOf("tivi") >=0 || ubc_voice.indexOf("ti vi")>=0){
@@ -804,17 +834,14 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
 
 
                         Log.d("TESTDCAR", "Mess from tablet: " + messageSocket);
-                        //Log.d("TESTDCAR", "Server address " + messageSocket);
-
-
-                        //Client myClient = new Client(NPNConstants.globalHostIP, 5010, messageSocket);
-                        //myClient.execute();
+                        sendBLEData("#" + messageSocket + "!");
 
                     }
                 }
                 break;
-            }
-
+            default:
+                Log.e(TAG, "wrong request code");
+                break;
         }
     }
 
@@ -911,7 +938,20 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
         goFullscreen();
 
     }
-    
+
+    private void sendBLEData(String message){
+        byte[] value;
+        try {
+            //send data to service
+            value = message.getBytes("UTF-8");
+            mService.writeRXCharacteristic(value);
+
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
     //UART service connected/disconnected
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder rawBinder) {
@@ -921,7 +961,11 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
                 Log.e(TAG, "Unable to initialize Bluetooth");
                 finish();
             }
-            connectBLE("C7:43:12:D8:E6:9E");
+            String strBLEMac = Helper.loadTVCode( (MainActivity)mContext, NPNConstants.SETTING_BLE_MAC);
+            //connectBLE("C7:43:12:D8:E6:9E");
+            if(strBLEMac.indexOf(00000) < 0){
+                connectBLE(strBLEMac);
+            }
 
         }
 

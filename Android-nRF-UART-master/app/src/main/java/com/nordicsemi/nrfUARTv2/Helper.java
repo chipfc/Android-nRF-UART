@@ -1,5 +1,8 @@
 package com.nordicsemi.nrfUARTv2;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.io.File;
@@ -147,5 +150,21 @@ public class Helper {
         }
 
         return "0000-0000";
+    }
+
+
+    public static void saveTVCode(Activity activity, String key, String code) {
+        if (key.isEmpty()) return;
+        SharedPreferences settings = activity.getSharedPreferences(NPNConstants.SETTING_REFKEY_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(key, code);
+        editor.commit();
+    }
+
+    public static String loadTVCode(Activity activity, String key) {
+        SharedPreferences settings = activity.getSharedPreferences(NPNConstants.SETTING_REFKEY_NAME, Context.MODE_PRIVATE);
+
+        return settings.getString(key, "00000");
+
     }
 }
