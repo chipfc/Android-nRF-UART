@@ -14,8 +14,8 @@ public class NPNConstants {
     public static final String CMD_LIGHT_TOP_OFF = "LIGHT_TOP_OFF";
 
 
-    public static final String CMD_LIGHT_CEILLING_ON = "LIGHT_CEILLING_ON";
-    public static final String CMD_LIGHT_CEILLING_OFF = "LIGHT_CEILLING_OFF";
+    public static final String CMD_LIGHT_CEILLING_ON = "LIGHT_CEIL_ON";
+    public static final String CMD_LIGHT_CEILLING_OFF = "LIGHT_CEIL_OFF";
 
     public static final String CMD_LIGHT_DRAWERS_ON = "LIGHT_DRAWERS_ON";
     public static final String CMD_LIGHT_DRAWERS_OFF = "LIGHT_DRAWERS_OFF";
@@ -38,27 +38,27 @@ public class NPNConstants {
     public static final String CMD_RIGHT_SEAT_STOP = "RIGHT_SEAT_STOP";
 
 
-    public static final String CMD_CURTAIN_FRONT_LEFT_UP = "CURTAIN_FRONT_LEFT_UP";
-    public static final String CMD_CURTAIN_FRONT_LEFT_DOWN = "CURTAIN_FRONT_LEFT_DOWN";
-    public static final String CMD_CURTAIN_FRONT_LEFT_STOP = "CURTAIN_FRONT_LEFT_STOP";
+    public static final String CMD_CURTAIN_FRONT_LEFT_UP = "CUR_FRONT_LT_UP";
+    public static final String CMD_CURTAIN_FRONT_LEFT_DOWN = "CUR_FRONT_LT_DOWN";
+    public static final String CMD_CURTAIN_FRONT_LEFT_STOP = "CUR_FRONT_LT_STOP";
 
-    public static final String CMD_CURTAIN_FRONT_RIGHT_UP = "CURTAIN_FRONT_RIGHT_UP";
-    public static final String CMD_CURTAIN_FRONT_RIGHT_DOWN = "CURTAIN_FRONT_RIGHT_DOWN";
-    public static final String CMD_CURTAIN_FRONT_RIGHT_STOP = "CURTAIN_FRONT_RIGHT_STOP";
-
-
-    public static final String CMD_CURTAIN_REAR_LEFT_UP = "CURTAIN_REAR_LEFT_UP";
-    public static final String CMD_CURTAIN_REAR_LEFT_DOWN = "CURTAIN_REAR_LEFT_DOWN";
-    public static final String CMD_CURTAIN_REAR_LEFT_STOP = "CURTAIN_REAR_LEFT_STOP";
-
-    public static final String CMD_CURTAIN_REAR_RIGHT_UP = "CURTAIN_REAR_RIGHT_UP";
-    public static final String CMD_CURTAIN_REAR_RIGHT_DOWN = "CURTAIN_REAR_RIGHT_DOWN";
-    public static final String CMD_CURTAIN_REAR_RIGHT_STOP = "CURTAIN_REAR_RIGHT_STOP";
+    public static final String CMD_CURTAIN_FRONT_RIGHT_UP = "CUR_FRONT_RT_UP";
+    public static final String CMD_CURTAIN_FRONT_RIGHT_DOWN = "CUR_FRONT_RT_DOWN";
+    public static final String CMD_CURTAIN_FRONT_RIGHT_STOP = "CUR_FRONT_RT_STOP";
 
 
-    public static final String CMD_CURTAIN_REAR_CENTER_UP = "CURTAIN_REAR_CENTER_UP";
-    public static final String CMD_CURTAIN_REAR_CENTER_DOWN = "CURTAIN_REAR_CENTER_DOWN";
-    public static final String CMD_CURTAIN_REAR_CENTER_STOP = "CURTAIN_REAR_CENTER_STOP";
+    public static final String CMD_CURTAIN_REAR_LEFT_UP = "CUR_REAR_LT_UP";
+    public static final String CMD_CURTAIN_REAR_LEFT_DOWN = "CUR_REAR_LT_DOWN";
+    public static final String CMD_CURTAIN_REAR_LEFT_STOP = "CUR_REAR_LT_STOP";
+
+    public static final String CMD_CURTAIN_REAR_RIGHT_UP = "CUR_REAR_RT_UP";
+    public static final String CMD_CURTAIN_REAR_RIGHT_DOWN = "CUR_REAR_RT_DOWN";
+    public static final String CMD_CURTAIN_REAR_RIGHT_STOP = "CUR_REAR_RT_STOP";
+
+
+    public static final String CMD_CURTAIN_REAR_CENTER_UP = "CUR_REAR_CR_UP";
+    public static final String CMD_CURTAIN_REAR_CENTER_DOWN = "CUR_REAR_CR_DOWN";
+    public static final String CMD_CURTAIN_REAR_CENTER_STOP = "CUR_REAR_CR_STOP";
 
     public static String SETTING_REFKEY_NAME = "dcar_settings";
 

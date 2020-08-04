@@ -41,6 +41,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -75,7 +76,11 @@ public class DeviceListActivity extends Activity {
     private Handler mHandler;
     private boolean mScanning;
 
-
+    public static Point getScreenSize(Activity activity) {
+        Point screenSize = new Point();
+        activity.getWindowManager().getDefaultDisplay().getSize(screenSize);
+        return screenSize;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,10 +88,13 @@ public class DeviceListActivity extends Activity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
+
         setContentView(R.layout.device_list);
         android.view.WindowManager.LayoutParams layoutParams = this.getWindow().getAttributes();
         layoutParams.gravity=Gravity.TOP;
-        layoutParams.y = 200;
+        //layoutParams.y = 200;
+        Point size = getScreenSize(this);
+        getWindow().setLayout((int)((float)size.x * 0.8), (int) ((float)size.y * 0.8));
         mHandler = new Handler();
         // Use this check to determine whether BLE is supported on the device.  Then you can
         // selectively disable BLE-related features.
@@ -132,7 +140,7 @@ public class DeviceListActivity extends Activity {
         newDevicesListView.setAdapter(deviceAdapter);
         newDevicesListView.setOnItemClickListener(mDeviceClickListener);
 
-           scanLeDevice(true);
+        scanLeDevice(true);
 
     }
     
@@ -171,7 +179,7 @@ public class DeviceListActivity extends Activity {
                 @Override
                 public void run() {
                 	
-                              addDevice(device,rssi);
+                    addDevice(device,rssi);
                 }
             });
         }
@@ -189,11 +197,13 @@ public class DeviceListActivity extends Activity {
         
         
         devRssiValues.put(device.getAddress(), rssi);
+        if(rssi > -60)
+            Log.d(TAG, device.getAddress() + "  " + rssi);
         if (!deviceFound) {
         	deviceList.add(device);
             mEmptyList.setVisibility(View.GONE);
                  	
-        	
+
 
             
             deviceAdapter.notifyDataSetChanged();

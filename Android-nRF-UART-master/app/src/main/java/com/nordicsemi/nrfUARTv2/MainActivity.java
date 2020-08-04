@@ -26,14 +26,23 @@ package com.nordicsemi.nrfUARTv2;
 
 
 
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.regex.Pattern;
 
 
 import com.nordicsemi.nrfUARTv2.UartService;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -85,7 +94,7 @@ import static com.nordicsemi.nrfUARTv2.Helper.TOUCH_ACTION_DOWN_DELAY;
 import static com.nordicsemi.nrfUARTv2.Helper.TOUCH_ACTION_DOWN_DELAY_SEAT;
 import static com.nordicsemi.nrfUARTv2.Helper.TOUCH_ACTION_UP_DELAY;
 
-public class MainActivity extends Activity implements RadioGroup.OnCheckedChangeListener,View.OnTouchListener, View.OnClickListener {
+public class MainActivity extends Activity implements RadioGroup.OnCheckedChangeListener,View.OnTouchListener, View.OnClickListener, UpdateAPK.UpdateAPKListener {
     private static final int REQUEST_SELECT_DEVICE = 1;
     private static final int REQUEST_ENABLE_BT = 2;
     private static final int UART_PROFILE_READY = 10;
@@ -315,37 +324,7 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
                 return true;
             }
         });
-//        btnSetting.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//
-//
-//                Ultis.showBarCodeDialog(mContext, null, "123", new NPNDialogBarcodeHandler() {
-//                    @Override
-//                    public void onOkButtonClicked(String pass, String agency) {
-//                        Ultis.saveTVCode((Activity) mContext, NPNConstants.SETTING_REFKEY_TV_CODE, pass);
-//                        Ultis.saveTVCode((Activity) mContext, NPNConstants.SETTING_REFKEY_TV_IP, agency);
-//
-//                        String macInfo = getMacAddress(agency);
-//                        Log.d(TAG, "MAC Info is: " + macInfo);
-//                        if(macInfo.indexOf("000") < 0) {
-//                            Ultis.saveTVCode((Activity) mContext, NPNConstants.SETTING_REFKEY_MAC, macInfo);
-//                        }
-//                        Toast.makeText(mContext, macInfo, Toast.LENGTH_LONG).show();
-//                    }
-//                });
-//                return true;
-//            }
-//        });
 
-//        btnCode = findViewById(R.id.btnCode);
-//        btnCode.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                Helper.showDialog(context, "CODE", Helper.getDeviceCode(), ipAddress);
-//                return true;
-//            }
-//        });
     }
 
     @Override
@@ -479,8 +458,9 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
         }
         Log.d(TAG, "CMD: " + cmd);
         if(cmd.length() > 0){
-
+            sendBLEData("#" + cmd + "!");
         }
+
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -692,8 +672,7 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
         }
         Log.d(TAG, "CMD is:" + cmd);
         if(cmd.length() > 0){
-            //Client myClient = new Client(NPNConstants.globalHostIP, 5010, cmd);
-            //myClient.execute();
+            sendBLEData("#" + cmd + "!");
         }
         return false;
     }
@@ -786,8 +765,8 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
                     ((TextView) findViewById(R.id.deviceName)).setText(mDevice.getName()+ " - connecting");
                     mService.connect(deviceAddress);
 
-                    Helper.saveTVCode((MainActivity)mContext, NPNConstants.SETTING_REFKEY_NAME, deviceAddress);
-                    
+                    Helper.saveTVCode((MainActivity)mContext, NPNConstants.SETTING_BLE_MAC, deviceAddress);
+
                 }
                 break;
             case REQUEST_ENABLE_BT:
@@ -832,9 +811,10 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
                             }
                         }
 
-
-                        Log.d("TESTDCAR", "Mess from tablet: " + messageSocket);
-                        sendBLEData("#" + messageSocket + "!");
+                        if(messageSocket.length() > 0) {
+                            Log.d(TAG, "Mess from tablet: " + messageSocket);
+                            sendBLEData("#" + messageSocket + "!");
+                        }
 
                     }
                 }
@@ -963,7 +943,8 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
             }
             String strBLEMac = Helper.loadTVCode( (MainActivity)mContext, NPNConstants.SETTING_BLE_MAC);
             //connectBLE("C7:43:12:D8:E6:9E");
-            if(strBLEMac.indexOf(00000) < 0){
+            if(strBLEMac.indexOf("00000") < 0){
+                Log.d(TAG, "Connecting to " + strBLEMac);
                 connectBLE(strBLEMac);
             }
 
@@ -983,6 +964,22 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
   
         }
     };
+    Timer reconnectTimer;
+    public void setupReconnectTimer(){
+        reconnectTimer = new Timer();
+        TimerTask aTask = new TimerTask() {
+            @Override
+            public void run() {
+                String strBLEMac = Helper.loadTVCode( (MainActivity)mContext, NPNConstants.SETTING_BLE_MAC);
+                //connectBLE("C7:43:12:D8:E6:9E");
+                if(strBLEMac.indexOf("00000") < 0){
+                    Log.d(TAG, "Connecting to " + strBLEMac);
+                    connectBLE(strBLEMac);
+                }
+            }
+        };
+        reconnectTimer.schedule(aTask, 5000,5000);
+    }
 
     private final BroadcastReceiver UARTStatusChangeReceiver = new BroadcastReceiver() {
 
@@ -1003,6 +1000,9 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
                              listAdapter.add("["+currentDateTimeString+"] Connected to: "+ mDevice.getName());
                         	 	messageListView.smoothScrollToPosition(listAdapter.getCount() - 1);
                              mState = UART_PROFILE_CONNECTED;
+                             if(reconnectTimer !=null)
+                                reconnectTimer.cancel();
+                             showMessage("Kết nối thành công!");
                      }
             	 });
             }
@@ -1021,6 +1021,7 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
                              mState = UART_PROFILE_DISCONNECTED;
                              mService.close();
                             //setUiState();
+                            setupReconnectTimer();
                          
                      }
                  });
@@ -1051,7 +1052,8 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
              }
            //*********************//
             if (action.equals(UartService.DEVICE_DOES_NOT_SUPPORT_UART)){
-            	showMessage("Device doesn't support UART. Disconnecting");
+            	showMessage("Chưa kết nối được với thiết bị. Xin vui tắt và mở lại chương trình!");
+            	//setupReconnectTimer();
             	mService.disconnect();
             }
             
@@ -1255,4 +1257,35 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
     }
 
 
+    @Override
+    public void onDownloadApkToUpdate(String path) {
+        Intent i = new Intent();
+        i.setAction(Intent.ACTION_INSTALL_PACKAGE);
+
+        i.setDataAndType(Uri.fromFile(new File(path)), "application/vnd.android.package-archive");
+        Log.d("NPNapp", "About to install new .apk");
+        mContext.startActivity(i);
+    }
+
+    public void requestAPKRepo(String url){
+        OkHttpClient okHttpClient = new OkHttpClient();
+        Request.Builder builder = new Request.Builder();
+        final Request request = builder.url(url).build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String data = response.body().string();
+                    String[] splitData = data.split(Pattern.quote("*"));
+
+                }
+            }
+        });
+
+    }
 }

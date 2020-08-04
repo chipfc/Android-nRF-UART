@@ -62,8 +62,8 @@
     <string name="Readdummy">D Read</string>
     <string name="removeBond">Remove Bond</string>
     <string name="paired">paired</string>
-    <string name="popup_title">Thoát điều khiểu</string>
-    <string name="popup_message">Bạn có muốn thoát chương trình nfay?</string>
+    <string name="popup_title">Thoát điều khiển</string>
+    <string name="popup_message">Bạn có muốn thoát chương trình này?</string>
     <string name="popup_yes">CÓ</string>
     <string name="popup_no">KHÔNG</string>
     <string name="ble_not_supported">Thiết bị không hỗ trợ kết nối Bluetooth</string>
