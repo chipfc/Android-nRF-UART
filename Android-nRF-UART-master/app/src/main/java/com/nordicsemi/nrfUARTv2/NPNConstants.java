@@ -1,5 +1,7 @@
 package com.nordicsemi.nrfUARTv2;
 
+import android.os.Environment;
+
 /**
  * Created by Le Trong Nhan on 01/08/2020.
  */
@@ -7,6 +9,13 @@ package com.nordicsemi.nrfUARTv2;
 public class NPNConstants {
     public static final String apiHeaderKey = "User-Agent";
     public static final String apiHeaderValue = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36 NPNLab";
+
+    public static final String rootStorageDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";//    "/storage/sdcard0/";
+
+    public static final String mainUrl = "https://ubc.sgp1.cdn.digitaloceanspaces.com/dcar_files/BLE_UART_TABLET/ble_version.txt";
+
+    public static final String apkUpdate = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/dcar_update.apk";
+
     public static final String CMD_LIGHT_SIDE_ON = "LIGHT_SIDE_ON";
     public static final String CMD_LIGHT_SIDE_OFF = "LIGHT_SIDE_OFF";
 

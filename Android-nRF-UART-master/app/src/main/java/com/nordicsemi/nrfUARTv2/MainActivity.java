@@ -44,6 +44,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -60,7 +61,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -70,9 +75,12 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.speech.RecognizerIntent;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -87,6 +95,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
 import static com.nordicsemi.nrfUARTv2.DeviceModel.SPEED_HIGH;
 import static com.nordicsemi.nrfUARTv2.DeviceModel.SPEED_LOW;
 import static com.nordicsemi.nrfUARTv2.DeviceModel.SPEED_STOP;
@@ -94,7 +104,7 @@ import static com.nordicsemi.nrfUARTv2.Helper.TOUCH_ACTION_DOWN_DELAY;
 import static com.nordicsemi.nrfUARTv2.Helper.TOUCH_ACTION_DOWN_DELAY_SEAT;
 import static com.nordicsemi.nrfUARTv2.Helper.TOUCH_ACTION_UP_DELAY;
 
-public class MainActivity extends Activity implements RadioGroup.OnCheckedChangeListener,View.OnTouchListener, View.OnClickListener, UpdateAPK.UpdateAPKListener {
+public class MainActivity extends Activity implements RadioGroup.OnCheckedChangeListener,View.OnTouchListener, View.OnClickListener, UpdateAPK.UpdateAPKListener, LocationListener {
     private static final int REQUEST_SELECT_DEVICE = 1;
     private static final int REQUEST_ENABLE_BT = 2;
     private static final int UART_PROFILE_READY = 10;
@@ -114,7 +124,7 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
     private Button btnConnectDisconnect,btnSend;
     private EditText edtMessage;
 
-
+    LocationManager locationManager;
     ////////Add source code/////////
     DeviceModel[] deviceModels = new DeviceModel[]{
             /** Board 1 - Motor */
@@ -325,6 +335,79 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
             }
         });
 
+    }
+
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
+    public boolean checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                new AlertDialog.Builder(this)
+                        .setTitle("Cài đặt quyền")
+                        .setMessage("Vị trí")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Prompt the user once explanation has been shown
+                                ActivityCompat.requestPermissions(MainActivity.this,
+                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                        MY_PERMISSIONS_REQUEST_LOCATION);
+                            }
+                        })
+                        .create()
+                        .show();
+
+
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+    String provider;
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // location-related task you need to do.
+                    if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+
+                        //Request location updates:
+                        locationManager.requestLocationUpdates(provider, 400, 1, this);
+                    }
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+
+                }
+                return;
+            }
+
+        }
     }
 
     @Override
@@ -905,21 +988,27 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
 
         initDeviceFirstState();
 
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread t, Throwable e) {
-                System.exit(1);
-            }
-        });
+//        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+//            @Override
+//            public void uncaughtException(Thread t, Throwable e) {
+//                System.exit(1);
+//            }
+//        });
 
 
 
         initUiFlags();
         goFullscreen();
-
+        setupUpdateTimer();
+        //installApk();
+        checkLocationPermission();
     }
 
     private void sendBLEData(String message){
+        if(isBLEConnected == false){
+            showMessage("Thiết bị chưa kết nối");
+            return;
+        }
         byte[] value;
         try {
             //send data to service
@@ -980,7 +1069,7 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
         };
         reconnectTimer.schedule(aTask, 5000,5000);
     }
-
+    private  boolean isBLEConnected = false;
     private final BroadcastReceiver UARTStatusChangeReceiver = new BroadcastReceiver() {
 
         public void onReceive(Context context, Intent intent) {
@@ -1003,6 +1092,7 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
                              if(reconnectTimer !=null)
                                 reconnectTimer.cancel();
                              showMessage("Kết nối thành công!");
+                         isBLEConnected = true;
                      }
             	 });
             }
@@ -1022,7 +1112,7 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
                              mService.close();
                             //setUiState();
                             setupReconnectTimer();
-                         
+                            isBLEConnected = false;
                      }
                  });
             }
@@ -1052,7 +1142,7 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
              }
            //*********************//
             if (action.equals(UartService.DEVICE_DOES_NOT_SUPPORT_UART)){
-            	showMessage("Chưa kết nối được với thiết bị. Xin vui tắt và mở lại chương trình!");
+            	showMessage("Lỗi kết nối. Vui lòng TẮT và MỞ LẠI chương trình!");
             	//setupReconnectTimer();
             	mService.disconnect();
             }
@@ -1258,13 +1348,32 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
 
 
     @Override
-    public void onDownloadApkToUpdate(String path) {
-        Intent i = new Intent();
-        i.setAction(Intent.ACTION_INSTALL_PACKAGE);
+    public void onDownloadApkToUpdate() {
 
-        i.setDataAndType(Uri.fromFile(new File(path)), "application/vnd.android.package-archive");
-        Log.d("NPNapp", "About to install new .apk");
-        mContext.startActivity(i);
+    }
+    public static final int REQUEST_INSTALL = 12345;
+    private void installApk(){
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Intent i = new Intent();
+//                i.setAction(Intent.ACTION_INSTALL_PACKAGE);
+//
+//                i.setDataAndType(Uri.fromFile(new File(NPNConstants.apkUpdate)), "application/vnd.android.package-archive");
+//                Log.d("NPNapp", "About to install new .apk");
+//                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                getApplicationContext().startActivity(i);
+//            }
+//        });
+
+        Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+        intent.setData(Uri.fromFile(new File(NPNConstants.apkUpdate)));
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true);
+        intent.putExtra(Intent.EXTRA_RETURN_RESULT, true);
+        intent.putExtra(Intent.EXTRA_INSTALLER_PACKAGE_NAME, getApplicationInfo().packageName);
+        startActivityForResult(intent,REQUEST_INSTALL);
+
     }
 
     public void requestAPKRepo(String url){
@@ -1281,11 +1390,87 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
             public void onResponse(Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
-                    String[] splitData = data.split(Pattern.quote("*"));
-
+                    try {
+                        JSONObject objObject = new JSONObject(data);
+                        int versionCode  = objObject.getInt("versionCode");
+                        String mess = objObject.getString("message");
+                        String link = objObject.getString("link");
+                        Log.d(TAG, "Parse data:" + versionCode + mess + link);
+                        if(versionCode > BuildConfig.VERSION_CODE){
+                            new UpdateAPK(mContext, new UpdateAPK.UpdateAPKListener() {
+                                @Override
+                                public void onDownloadApkToUpdate() {
+                                    displayUpdateDialog();
+                                }
+                            }).execute(link);
+                        }
+                    }catch (Exception e){}
+                    Log.d(TAG, data);
                 }
             }
         });
+
+    }
+
+    Timer mUpdateTimer;
+    private void setupUpdateTimer(){
+        mUpdateTimer = new Timer();
+        TimerTask aTask = new TimerTask() {
+            @Override
+            public void run() {
+                if(Helper.checkLanConnected(mContext) || Helper.checkWifiConnected(mContext)){
+                    requestAPKRepo(NPNConstants.mainUrl);
+                    mUpdateTimer.cancel();
+                }
+            }
+        };
+        mUpdateTimer.schedule(aTask, 5000, 60000);
+    }
+
+
+    public void displayUpdateDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setPositiveButton("ĐỒNG Ý", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                //installApk();
+            }
+        });
+        builder.setNegativeButton("HỦY BỎ", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View view = inflater.inflate(R.layout.layout_alert_dialog, null);
+
+        builder.setView(view);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
 
     }
 }

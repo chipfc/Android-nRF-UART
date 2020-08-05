@@ -31,7 +31,7 @@ public class UpdateAPK extends AsyncTask<String, String, String>  {
     }
     protected  String doInBackground(String... f_url) {
 
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/dcar_update.apk";
+        String path = NPNConstants.apkUpdate;
         try {
             URL url = new URL(f_url[0]);
             URLConnection connection = url.openConnection();
@@ -61,9 +61,9 @@ public class UpdateAPK extends AsyncTask<String, String, String>  {
     protected void onPostExecute(String path) {
 
         if (mListener == null) { return; }
-        mListener.onDownloadApkToUpdate(path);
+        mListener.onDownloadApkToUpdate();
     }
     public interface UpdateAPKListener {
-        void onDownloadApkToUpdate(String path);
+        void onDownloadApkToUpdate();
     }
 }

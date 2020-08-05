@@ -3,6 +3,8 @@ package com.nordicsemi.nrfUARTv2;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import java.io.File;
@@ -165,6 +167,34 @@ public class Helper {
         SharedPreferences settings = activity.getSharedPreferences(NPNConstants.SETTING_REFKEY_NAME, Context.MODE_PRIVATE);
 
         return settings.getString(key, "00000");
-
     }
+
+    public static boolean checkWifiConnected(Context context)
+    {
+        ConnectivityManager connManager = (ConnectivityManager) (context.getSystemService(Context.CONNECTIVITY_SERVICE));
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+        if (mWifi.isConnected()) {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public static boolean checkLanConnected(Context context)
+    {
+        ConnectivityManager connManager = (ConnectivityManager) (context.getSystemService(Context.CONNECTIVITY_SERVICE));
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
+
+
+        if (mWifi.isConnected()) {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 }
