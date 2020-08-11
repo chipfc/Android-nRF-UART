@@ -882,9 +882,11 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
                             messageSocket = "DCAR_CURTAIN_DOWN";
                         }else if(ubc_voice.indexOf("tắt")>=0 && ubc_voice.indexOf("đèn")>=0) {
                             messageSocket = "DCAR_LED_OFF";
+                            updateUIVoiceCommand(messageSocket);
                         }else if(ubc_voice.indexOf("mở")>=0 && ubc_voice.indexOf("đèn")>=0||
                                 ubc_voice.indexOf("bật")>=0 && ubc_voice.indexOf("đèn")>=0){
                             messageSocket = "DCAR_LED_ON";
+                            updateUIVoiceCommand(messageSocket);
                         }
                         else if(ubc_voice.indexOf("truyền hình") >=0 || ubc_voice.indexOf("kênh") >=0 || ubc_voice.indexOf("tivi") >=0 || ubc_voice.indexOf("ti vi")>=0){
                             if(ubc_voice.indexOf("mở")>=0|| ubc_voice.indexOf("bật")>=0){
@@ -908,6 +910,57 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
         }
     }
 
+    public void updateUIVoiceCommand(String cmd){
+        final String mess = cmd;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                switch (mess) {
+                    case "DCAR_LED_ON":
+                        deviceModels[INDEX_LIGHT_4X].setOn();
+                        //deviceModels[INDEX_LIGHT_4X].configForSendData(SPEED_HIGH, 50);
+                        imgTopLight.setImageResource(R.drawable.dcar_button_4xled_top_focus);
+                        imgRearLight.setImageResource(R.drawable.dcar_button_4xled_bot_focus);
+
+                        deviceModels[INDEX_LIGHT_CEILING].setOn();
+                        //deviceModels[INDEX_LIGHT_CEILING].configForSendData(SPEED_HIGH, 50);
+                        imgCeilingLight.setImageResource(R.drawable.dcar_button_panel2_center_focus);
+
+                        deviceModels[INDEX_LIGHT_DRAWERS].setOn();
+                        //deviceModels[INDEX_LIGHT_DRAWERS].configForSendData(SPEED_HIGH, 50);
+                        imgDrawersLight.setImageResource(R.drawable.dcar_button_panel_left_focus);
+
+                        deviceModels[INDEX_LIGHT_SIDE].setOn();
+                        //deviceModels[INDEX_LIGHT_SIDE].configForSendData(SPEED_HIGH, 50);
+                        imgSideLightLeft.setImageResource(R.drawable.dcar_button_12_left_focus);
+                        imgSideLightRight.setImageResource(R.drawable.dcar_button_12_right_focus);
+
+                        break;
+
+                    case "DCAR_LED_OFF":
+                        deviceModels[INDEX_LIGHT_4X].setOff();
+                        //deviceModels[INDEX_LIGHT_4X].configForSendData(SPEED_LOW, 50);
+                        imgTopLight.setImageResource(R.drawable.dcar_button_4xled_top_normal);
+                        imgRearLight.setImageResource(R.drawable.dcar_button_4xled_bot_normal);
+
+                        deviceModels[INDEX_LIGHT_CEILING].setOff();
+                        //deviceModels[INDEX_LIGHT_CEILING].configForSendData(SPEED_LOW, 50);
+                        imgCeilingLight.setImageResource(R.drawable.dcar_button_panel2_center_normal);
+
+                        deviceModels[INDEX_LIGHT_DRAWERS].setOff();
+                        //deviceModels[INDEX_LIGHT_DRAWERS].configForSendData(SPEED_LOW, 50);
+                        imgDrawersLight.setImageResource(R.drawable.dcar_button_panel_left_normal);
+
+                        deviceModels[INDEX_LIGHT_SIDE].setOff();
+                        //deviceModels[INDEX_LIGHT_SIDE].configForSendData(SPEED_LOW, 50);
+                        imgSideLightLeft.setImageResource(R.drawable.dcar_button_12_left_normal);
+                        imgSideLightRight.setImageResource(R.drawable.dcar_button_12_right_normal);
+
+                        break;
+                }
+            }
+        });
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
