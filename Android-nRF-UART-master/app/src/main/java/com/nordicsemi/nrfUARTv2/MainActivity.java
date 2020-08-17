@@ -75,6 +75,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -104,7 +105,7 @@ import static com.nordicsemi.nrfUARTv2.Helper.TOUCH_ACTION_DOWN_DELAY;
 import static com.nordicsemi.nrfUARTv2.Helper.TOUCH_ACTION_DOWN_DELAY_SEAT;
 import static com.nordicsemi.nrfUARTv2.Helper.TOUCH_ACTION_UP_DELAY;
 
-public class MainActivity extends Activity implements RadioGroup.OnCheckedChangeListener,View.OnTouchListener, View.OnClickListener, UpdateAPK.UpdateAPKListener, LocationListener {
+public class MainActivity extends Activity implements TextToSpeech.OnInitListener, RadioGroup.OnCheckedChangeListener,View.OnTouchListener, View.OnClickListener, UpdateAPK.UpdateAPKListener, LocationListener {
     private static final int REQUEST_SELECT_DEVICE = 1;
     private static final int REQUEST_ENABLE_BT = 2;
     private static final int UART_PROFILE_READY = 10;
@@ -395,7 +396,7 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
                             == PackageManager.PERMISSION_GRANTED) {
 
                         //Request location updates:
-                        locationManager.requestLocationUpdates(provider, 400, 1, this);
+//                        locationManager.requestLocationUpdates(provider, 400, 1, this);
                     }
 
                 } else {
@@ -888,22 +889,58 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
                             messageSocket = "DCAR_LED_ON";
                             updateUIVoiceCommand(messageSocket);
                         }
-                        else if(ubc_voice.indexOf("truyền hình") >=0 || ubc_voice.indexOf("kênh") >=0 || ubc_voice.indexOf("tivi") >=0 || ubc_voice.indexOf("ti vi")>=0){
+                        else if(ubc_voice.indexOf("truyền hình") >=0 || ubc_voice.indexOf("tivi") >=0 || ubc_voice.indexOf("ti vi")>=0){
                             if(ubc_voice.indexOf("mở")>=0|| ubc_voice.indexOf("bật")>=0){
                                 //((MainActivity)(getActivity())).sendKeyCommand("DCAR_TIVI_ON");
+                                messageSocket = "TIVI_ON";
                             }else if(ubc_voice.indexOf("tắt")>=0||ubc_voice.indexOf("đóng")>=0){
                                 //((MainActivity)(getActivity())).sendKeyCommand("DCAR_TIVI_OFF");
+                                messageSocket = "TIVI_OFF";
                             }
                         }
 
                         if(messageSocket.length() > 0) {
                             Log.d(TAG, "Mess from tablet: " + messageSocket);
                             sendBLEData("#" + messageSocket + "!");
+                            if(messageSocket.equals("DCAR_CURTAIN_UP")){
+                                talkToMe("Cửa sổ đang mở");
+                            }else if(messageSocket.equals("DCAR_CURTAIN_DOWN")){
+                                talkToMe("Cửa sổ đang đóng");
+                            }else if(messageSocket.equals("DCAR_LED_ON")){
+                                talkToMe("Đèn đã bật");
+                            }else if(messageSocket.equals("DCAR_LED_OFF")){
+                                talkToMe("Đèn đã tắt");
+                            }else if(messageSocket.equals("TIVI_ON")){
+                                talkToMe("Đang khởi động tivi");
+                            }else if(messageSocket.equals("TIVI_OFF")){
+                                talkToMe("Đang đóng tivi");
+                            }
+                        }else{
+                            //Log.d(TAG, "Error code 1");
+                            talkToMe("Tôi không hiểu lệnh này, xin vui lòng thử lại!");
                         }
 
                     }
+                }else{
+                    Log.d(TAG, "Error code 2");
+                    //talkToMe("Tôi không hiểu lệnh này, xin vui lòng thử lại!");
                 }
                 break;
+
+            case DATA_CHECKING:
+                if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS){
+                    niceTTS = new TextToSpeech(this, this);
+                    //no data, prompt to install it
+                    Log.d(TAG, "Activating TTS ok");
+                }
+                else {
+                    Intent promptInstall = new Intent();
+                    promptInstall.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+                    startActivity(promptInstall);
+                }
+                break;
+
+
             default:
                 Log.e(TAG, "wrong request code");
                 break;
@@ -1055,6 +1092,13 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
         setupUpdateTimer();
         //installApk();
         checkLocationPermission();
+
+        //create an Intent
+        Intent checkData = new Intent();
+        //set it up to check for tts data
+        checkData.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+        //start it so that it returns the result
+        startActivityForResult(checkData, DATA_CHECKING);
     }
 
     private void sendBLEData(String message){
@@ -1267,6 +1311,7 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
         }
+        goFullscreen();
  
     }
 
@@ -1526,4 +1571,23 @@ public class MainActivity extends Activity implements RadioGroup.OnCheckedChange
     public void onProviderDisabled(String provider) {
 
     }
+
+
+    private final int DATA_CHECKING = 50;
+    private TextToSpeech niceTTS;
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
+            niceTTS.setLanguage(Locale.getDefault());
+            Log.d("NPNLauncher", "set language here");
+
+        }
+    }
+    public void talkToMe(String sentence) {
+        //Log.d("NPNLauncher", "Talk to me: " + sentence);
+        String speakWords = sentence;
+        niceTTS.speak(speakWords, TextToSpeech.QUEUE_FLUSH, null);
+    }
+
 }
+
