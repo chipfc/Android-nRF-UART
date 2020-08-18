@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 android {
-    compileSdkVersion 26
+    compileSdkVersion 29
 
 
     defaultConfig {
         applicationId "com.dcar.nordicsemi.nrfUARTv2"
         minSdkVersion 18
-        targetSdkVersion 26
+        targetSdkVersion 29
     }
 
 
