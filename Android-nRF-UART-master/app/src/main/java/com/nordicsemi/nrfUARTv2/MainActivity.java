@@ -185,9 +185,16 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     private static final int INDEX_NOT_USE = 17;
 
 
+    ImageView imgLeftSeat3;
+    ImageButton btnLeftSeatUp3;
+    ImageButton btnLeftSeatDown3;
+
+
     ImageView imgLeftSeat;
     ImageButton btnLeftSeatUp;
     ImageButton btnLeftSeatDown;
+
+
 
     ImageView imgRightSeat;
     ImageButton btnRightSeatUp;
@@ -246,6 +253,14 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                 startVoiceInput();
             }
         });
+
+
+        imgLeftSeat3 = findViewById(R.id.dcar3_left_seat);
+        btnLeftSeatUp3 = findViewById(R.id.dcar3_left_seat_up);
+        btnLeftSeatDown3 = findViewById(R.id.dcar3_left_seat_down);
+        btnLeftSeatUp3.setOnTouchListener(this);
+        btnLeftSeatDown3.setOnTouchListener(this);
+
 
         // Left Seat
         imgLeftSeat = findViewById(R.id.imgLeftSeat);
@@ -554,15 +569,34 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         String cmd = "";
         switch (v.getId()) {
 
+            case R.id.dcar3_left_seat_up:
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    imgLeftSeat3.setImageResource(R.drawable.dcar3_left_seat_on);
+
+                    deviceModels[INDEX_LEFT_SEAT_A].configForSendData(SPEED_HIGH, TOUCH_ACTION_DOWN_DELAY_SEAT);
+                    cmd = NPNConstants.CMD_LEFT_SEAT_UP;
+
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    imgLeftSeat3.setImageResource(R.drawable.dcar3_left_seat_off);
+
+                    deviceModels[INDEX_LEFT_SEAT_A].configForSendData(SPEED_LOW, TOUCH_ACTION_UP_DELAY);
+                    cmd = NPNConstants.CMD_LEFT_SEAT_STOP;
+                }
+
+                break;
             case R.id.btnLeftSeatUp:
 
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     imgLeftSeat.setImageResource(R.drawable.dcar_button_seat_left_focus);
+
+
                     deviceModels[INDEX_LEFT_SEAT_A].configForSendData(SPEED_HIGH, TOUCH_ACTION_DOWN_DELAY_SEAT);
                     cmd = NPNConstants.CMD_LEFT_SEAT_UP;
 
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     imgLeftSeat.setImageResource(R.drawable.dcar_button_seat_left_normal);
+
                     deviceModels[INDEX_LEFT_SEAT_A].configForSendData(SPEED_LOW, TOUCH_ACTION_UP_DELAY);
                     cmd = NPNConstants.CMD_LEFT_SEAT_STOP;
                 }
