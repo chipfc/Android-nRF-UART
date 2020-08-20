@@ -22,6 +22,8 @@ public class NPNConstants {
     public static final String CMD_LIGHT_TOP_ON = "LIGHT_TOP_ON";
     public static final String CMD_LIGHT_TOP_OFF = "LIGHT_TOP_OFF";
 
+    public static final String CMD_LIGHT_WATER_DROP_ON = "LIGHT_DROP_ON";
+    public static final String CMD_LIGHT_WATER_DROP_OFF = "LIGHT_DROP_OFF";
 
     public static final String CMD_LIGHT_CEILLING_ON = "LIGHT_CEIL_ON";
     public static final String CMD_LIGHT_CEILLING_OFF = "LIGHT_CEIL_OFF";

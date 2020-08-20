@@ -109,27 +109,16 @@
     </RelativeLayout>
 
     <android.support.percent.PercentRelativeLayout
+        android:id="@+id/ui_dcar3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/dcar3_bg_off">
-
-        <!-- dcar3_home_search_voice -->
-        <ImageButton
-            android:id="@+id/dcar3_home_search_voice"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/btn_background"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_mic_white"
-            app:layout_heightPercent="10%"
-            app:layout_marginStartPercent="46.5%"
-            app:layout_marginTopPercent="57%"
-            app:layout_widthPercent="7%" />
+        android:background="@drawable/dcar3_bg_off"
+        android:visibility="gone">
 
         <!-- dcar3_led_day -->
         <ImageView
             android:id="@+id/dcar3_led_day"
-            android:src="@drawable/dcar3_led_day_off"
+            android:src="@drawable/dcar3_led_day"
             app:layout_heightPercent="22.78%"
             app:layout_marginStartPercent="18.07%"
             app:layout_marginTopPercent="74.91%"
@@ -138,7 +127,7 @@
         <!-- dcar3_curtain_front_left -->
         <ImageView
             android:id="@+id/dcar3_curtain_front_left"
-            android:src="@drawable/dcar3_curtain_front_left_off"
+            android:src="@drawable/dcar3_curtain_front_left"
             app:layout_heightPercent="32.69%"
             app:layout_marginStartPercent="20.94%"
             app:layout_marginTopPercent="37.13%"
@@ -163,7 +152,7 @@
         <!-- dcar3_curtain_front_right -->
         <ImageView
             android:id="@+id/dcar3_curtain_front_right"
-            android:src="@drawable/dcar3_curtain_front_right_off"
+            android:src="@drawable/dcar3_curtain_front_right"
             app:layout_heightPercent="29.54%"
             app:layout_marginStartPercent="66.51%"
             app:layout_marginTopPercent="37.41%"
@@ -188,7 +177,7 @@
         <!-- dcar3_curtain_rear_left -->
         <ImageView
             android:id="@+id/dcar3_curtain_rear_left"
-            android:src="@drawable/dcar3_curtain_rear_left_off"
+            android:src="@drawable/dcar3_curtain_rear_left"
             app:layout_heightPercent="44.07%"
             app:layout_marginStartPercent="6.82%"
             app:layout_marginTopPercent="45.74%"
@@ -213,7 +202,7 @@
         <!-- dcar3_curtain_rear_right -->
         <ImageView
             android:id="@+id/dcar3_curtain_rear_right"
-            android:src="@drawable/dcar3_curtain_rear_right_off"
+            android:src="@drawable/dcar3_curtain_rear_right"
             app:layout_heightPercent="40.93%"
             app:layout_marginStartPercent="85.00%"
             app:layout_marginTopPercent="45.28%"
@@ -238,25 +227,16 @@
         <!-- dcar3_light_water_drop -->
         <ImageView
             android:id="@+id/dcar3_light_water_drop"
-            android:src="@drawable/dcar3_light_water_drop_off"
+            android:src="@drawable/dcar3_light_water_drop"
             app:layout_heightPercent="11.85%"
             app:layout_marginStartPercent="6.88%"
             app:layout_marginTopPercent="25.83%"
             app:layout_widthPercent="86.25%" />
 
-        <!-- dcar3_tv -->
-        <ImageView
-            android:id="@+id/dcar3_tv"
-            android:src="@drawable/dcar3_tv_off"
-            app:layout_heightPercent="16.76%"
-            app:layout_marginStartPercent="41.72%"
-            app:layout_marginTopPercent="24.72%"
-            app:layout_widthPercent="15.21%" />
-
         <!-- dcar3_right_seat -->
         <ImageView
             android:id="@+id/dcar3_right_seat"
-            android:src="@drawable/dcar3_right_seat_off"
+            android:src="@drawable/dcar3_right_seat"
             app:layout_heightPercent="33.61%"
             app:layout_marginStartPercent="51.82%"
             app:layout_marginTopPercent="42.59%"
@@ -281,7 +261,7 @@
         <!-- dcar3_left_seat -->
         <ImageView
             android:id="@+id/dcar3_left_seat"
-            android:src="@drawable/dcar3_left_seat_off"
+            android:src="@drawable/dcar3_left_seat"
             app:layout_heightPercent="33.43%"
             app:layout_marginStartPercent="32.29%"
             app:layout_marginTopPercent="42.69%"
@@ -306,34 +286,43 @@
         <!-- dcar3_light_tv -->
         <ImageView
             android:id="@+id/dcar3_light_tv"
-            android:src="@drawable/dcar3_light_tv_off"
+            android:src="@drawable/dcar3_light_tv"
             app:layout_heightPercent="17.50%"
             app:layout_marginStartPercent="39.27%"
             app:layout_marginTopPercent="23.89%"
             app:layout_widthPercent="20.00%" />
 
+        <!-- dcar3_light_ceiling -->
+        <ImageView
+            android:id="@+id/dcar3_light_ceiling"
+            android:src="@drawable/dcar3_light_ceiling"
+            app:layout_heightPercent="24.07%"
+            app:layout_marginStartPercent="20.89%"
+            app:layout_marginTopPercent="0.00%"
+            app:layout_widthPercent="62.60%" />
+
         <!-- dcar3_light_sky_stars -->
         <ImageView
             android:id="@+id/dcar3_light_sky_stars"
-            android:src="@drawable/dcar3_light_sky_stars_off"
+            android:src="@drawable/dcar3_light_sky_stars"
             app:layout_heightPercent="22.59%"
             app:layout_marginStartPercent="26.93%"
             app:layout_marginTopPercent="-0.65%"
             app:layout_widthPercent="52.29%" />
 
-        <!-- dcar3_light_ceiling -->
+        <!-- dcar3_tv -->
         <ImageView
-            android:id="@+id/dcar3_light_ceiling"
-            android:src="@drawable/dcar3_light_ceiling_off"
-            app:layout_heightPercent="24.07%"
-            app:layout_marginStartPercent="20.52%"
-            app:layout_marginTopPercent="-0.65%"
-            app:layout_widthPercent="62.60%" />
+            android:id="@+id/dcar3_tv"
+            android:src="@drawable/dcar3_tv"
+            app:layout_heightPercent="16.76%"
+            app:layout_marginStartPercent="41.72%"
+            app:layout_marginTopPercent="24.72%"
+            app:layout_widthPercent="15.21%" />
 
         <!-- dcar3_center_table -->
         <ImageView
             android:id="@+id/dcar3_center_table"
-            android:src="@drawable/dcar3_center_table_off"
+            android:src="@drawable/dcar3_center_table"
             app:layout_heightPercent="8.89%"
             app:layout_marginStartPercent="44.64%"
             app:layout_marginTopPercent="75.83%"
@@ -342,6 +331,7 @@
         <ImageButton
             android:id="@+id/dcar3_center_table_up"
             android:background="@drawable/dcar3_button_up"
+            android:visibility="gone"
             app:layout_heightPercent="7.50%"
             app:layout_marginStartPercent="47.19%"
             app:layout_marginTopPercent="72.59%"
@@ -350,18 +340,33 @@
         <ImageButton
             android:id="@+id/dcar3_center_table_down"
             android:background="@drawable/dcar3_button_down"
+            android:visibility="gone"
             app:layout_heightPercent="7.50%"
             app:layout_marginStartPercent="47.19%"
             app:layout_marginTopPercent="80.56%"
             app:layout_widthPercent="4.17%" />
 
+        <!-- dcar3_home_search_voice -->
+        <ImageButton
+            android:id="@+id/dcar3_home_search_voice"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/btn_background"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_mic_white"
+            app:layout_heightPercent="10%"
+            app:layout_marginStartPercent="46.5%"
+            app:layout_marginTopPercent="57%"
+            app:layout_widthPercent="7%" />
+
     </android.support.percent.PercentRelativeLayout>
 
     <android.support.percent.PercentRelativeLayout
+        android:id="@+id/ui_dcar1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/dcar_background"
-        android:visibility="gone">
+        android:background="@drawable/dcar1_bg_off"
+        android:visibility="visible">
 
         <ImageButton
             android:id="@+id/btn_home_search_voice"
@@ -377,244 +382,229 @@
 
 
         <ImageView
-            android:id="@+id/imgSideLightLeft"
-            android:src="@drawable/dcar_button_12_left_normal"
-            app:layout_heightPercent="13.33%"
-            app:layout_marginStartPercent="13.75%"
-            app:layout_marginTopPercent="6.04%"
-            app:layout_widthPercent="26.50%" />
+            android:id="@+id/dcar1_light_ceiling"
+            android:src="@drawable/dcar1_light_ceiling"
+            app:layout_heightPercent="11.57%"
+            app:layout_marginStartPercent="14.17%"
+            app:layout_marginTopPercent="7.04%"
+            app:layout_widthPercent="71.78%" />
+
 
         <ImageView
-            android:id="@+id/imgSideLightRight"
-            android:src="@drawable/dcar_button_12_right_normal"
-            app:layout_heightPercent="13.33%"
-            app:layout_marginStartPercent="60.13%"
-            app:layout_marginTopPercent="6.04%"
-            app:layout_widthPercent="26.50%" />
+            android:id="@+id/dcar1_light_tv"
+            android:src="@drawable/dcar1_light_tv"
+            app:layout_heightPercent="26.76%"
+            app:layout_marginStartPercent="22.39%"
+            app:layout_marginTopPercent="2.31%"
+            app:layout_widthPercent="58.22%" />
 
         <ImageView
-            android:id="@+id/imgTopLight"
-            android:src="@drawable/dcar_button_4xled_top_normal"
-            app:layout_heightPercent="9.58%"
-            app:layout_marginStartPercent="22.13%"
-            app:layout_marginTopPercent="1.88%"
-            app:layout_widthPercent="58.63%" />
+            android:id="@+id/dcar1_light_sky_stars"
+            android:src="@drawable/dcar1_light_sky_stars"
+            app:layout_heightPercent="10.00%"
+            app:layout_marginStartPercent="32.56%"
+            app:layout_marginTopPercent="1.11%"
+            app:layout_widthPercent="36.78%" />
 
         <ImageView
-            android:id="@+id/imgCeilingLight"
-            android:src="@drawable/dcar_button_panel2_center_normal"
-            app:layout_heightPercent="11.46%"
-            app:layout_marginStartPercent="32.25%"
-            app:layout_marginTopPercent="0.42%"
-            app:layout_widthPercent="37.38%" />
-
-        <ImageView
-            android:id="@+id/imgRearLight"
-            android:src="@drawable/dcar_button_4xled_bot_normal"
-            app:layout_heightPercent="8.75%"
-            app:layout_marginStartPercent="38.00%"
-            app:layout_marginTopPercent="20.42%"
-            app:layout_widthPercent="26.50%" />
-
-        <ImageView
-            android:id="@+id/imgCurtainFrontLeft"
-            android:src="@drawable/dcar_button_27_normal"
-            app:layout_heightPercent="22.29%"
-            app:layout_marginStartPercent="13.88%"
-            app:layout_marginTopPercent="17.08%"
-            app:layout_widthPercent="15.75%" />
+            android:id="@+id/dcar1_curtain_front_left"
+            android:src="@drawable/dcar1_curtain_front_left"
+            app:layout_heightPercent="21.48%"
+            app:layout_marginStartPercent="14.17%"
+            app:layout_marginTopPercent="17.69%"
+            app:layout_widthPercent="15.22%" />
 
         <ImageButton
-            android:id="@+id/btnCertainFrontLeftUp"
-            android:background="@drawable/dcar_button_up"
-            app:layout_heightPercent="10.42%"
+            android:id="@+id/dcar1_curtain_front_left_up"
+            android:background="@drawable/dcar1_button_up"
+            app:layout_heightPercent="10.37%"
             app:layout_marginStartPercent="18.00%"
             app:layout_marginTopPercent="18.54%"
-            app:layout_widthPercent="6.25%" />
+            app:layout_widthPercent="6.22%" />
 
         <ImageButton
-            android:id="@+id/btnCertainFrontLeftDown"
-            android:background="@drawable/dcar_button_down"
-            app:layout_heightPercent="10.42%"
+            android:id="@+id/dcar1_curtain_front_left_down"
+            android:background="@drawable/dcar1_button_down"
+            app:layout_heightPercent="10.37%"
             app:layout_marginStartPercent="18.00%"
             app:layout_marginTopPercent="28.96%"
-            app:layout_widthPercent="6.25%" />
+            app:layout_widthPercent="6.22%" />
 
         <ImageView
-            android:id="@+id/imgCurtainFrontRight"
-            android:src="@drawable/dcar_button_28_normal"
-            app:layout_heightPercent="22.29%"
-            app:layout_marginStartPercent="72.25%"
-            app:layout_marginTopPercent="17.08%"
-            app:layout_widthPercent="14.25%" />
+            android:id="@+id/dcar1_curtain_front_right"
+            android:src="@drawable/dcar1_curtain_front_right"
+            app:layout_heightPercent="19.44%"
+            app:layout_marginStartPercent="72.67%"
+            app:layout_marginTopPercent="18.70%"
+            app:layout_widthPercent="13.28%" />
 
         <ImageButton
-            android:id="@+id/btnCertainFrontRightUp"
-            android:background="@drawable/dcar_button_up"
-            app:layout_heightPercent="10.42%"
+            android:id="@+id/dcar1_curtain_front_right_up"
+            android:background="@drawable/dcar1_button_up"
+            app:layout_heightPercent="10.37%"
             app:layout_marginStartPercent="77.00%"
             app:layout_marginTopPercent="18.96%"
-            app:layout_widthPercent="6.25%" />
+            app:layout_widthPercent="6.22%" />
 
         <ImageButton
-            android:id="@+id/btnCertainFrontRightDown"
-            android:background="@drawable/dcar_button_down"
-            app:layout_heightPercent="10.42%"
+            android:id="@+id/dcar1_curtain_front_right_down"
+            android:background="@drawable/dcar1_button_down"
+            app:layout_heightPercent="10.37%"
             app:layout_marginStartPercent="77.00%"
             app:layout_marginTopPercent="29.38%"
-            app:layout_widthPercent="6.25%" />
+            app:layout_widthPercent="6.22%" />
 
         <ImageView
-            android:id="@+id/imgLeftSeat"
-            android:src="@drawable/dcar_button_seat_left_normal"
-            app:layout_heightPercent="47.29%"
-            app:layout_marginStartPercent="25.63%"
-            app:layout_marginTopPercent="26.67%"
-            app:layout_widthPercent="24.38%" />
+            android:id="@+id/dcar1_left_seat"
+            android:src="@drawable/dcar1_left_seat"
+            app:layout_heightPercent="43.43%"
+            app:layout_marginStartPercent="27.78%"
+            app:layout_marginTopPercent="28.24%"
+            app:layout_widthPercent="19.33%" />
 
         <ImageButton
-            android:id="@+id/btnLeftSeatUp"
-            android:background="@drawable/dcar_button_up"
-            app:layout_heightPercent="10.42%"
+            android:id="@+id/dcar1_left_seat_up"
+            android:background="@drawable/dcar1_button_up"
+            app:layout_heightPercent="10.37%"
             app:layout_marginStartPercent="36.63%"
             app:layout_marginTopPercent="38.13%"
-            app:layout_widthPercent="6.25%" />
+            app:layout_widthPercent="6.22%" />
 
         <ImageButton
-            android:id="@+id/btnLeftSeatDown"
-            android:background="@drawable/dcar_button_down"
-            app:layout_heightPercent="10.42%"
+            android:id="@+id/dcar1_left_seat_down"
+            android:background="@drawable/dcar1_button_down"
+            app:layout_heightPercent="10.37%"
             app:layout_marginStartPercent="36.63%"
             app:layout_marginTopPercent="48.75%"
-            app:layout_widthPercent="6.25%" />
+            app:layout_widthPercent="6.22%" />
 
         <ImageView
-            android:id="@+id/imgRightSeat"
-            android:src="@drawable/dcar_button_seat_right_normal"
-            app:layout_heightPercent="47.29%"
-            app:layout_marginStartPercent="50.00%"
-            app:layout_marginTopPercent="26.67%"
-            app:layout_widthPercent="24.38%" />
-
-        <ImageButton
-            android:id="@+id/btnRightSeatUp"
-            android:background="@drawable/dcar_button_up"
-            app:layout_heightPercent="10.42%"
-            app:layout_marginStartPercent="58.38%"
-            app:layout_marginTopPercent="38.13%"
-            app:layout_widthPercent="6.25%" />
-
-        <ImageButton
-            android:id="@+id/btnRightSeatDown"
-            android:background="@drawable/dcar_button_down"
-            app:layout_heightPercent="10.42%"
-            app:layout_marginStartPercent="58.38%"
-            app:layout_marginTopPercent="48.75%"
-            app:layout_widthPercent="6.25%" />
-
-        <ImageView
-            android:id="@+id/imgTV"
-            android:src="@drawable/dcar_button_tv_normal"
-            app:layout_heightPercent="17.29%"
-            app:layout_marginStartPercent="41.25%"
-            app:layout_marginTopPercent="20.21%"
+            android:id="@+id/dcar1_right_seat"
+            android:src="@drawable/dcar1_right_seat"
+            app:layout_heightPercent="43.33%"
+            app:layout_marginStartPercent="54.11%"
+            app:layout_marginTopPercent="28.70%"
             app:layout_widthPercent="19.00%" />
 
-        <ImageView
-            android:id="@+id/imgDrawersLight"
-            android:src="@drawable/dcar_button_panel_left_normal"
-            app:layout_heightPercent="21.67%"
-            app:layout_marginStartPercent="23.13%"
-            app:layout_marginTopPercent="51.88%"
-            app:layout_widthPercent="7.75%" />
-
-        <ImageView
-            android:id="@+id/imgLeftTable"
-            android:src="@drawable/dcar_button_table_left_normal"
-            app:layout_heightPercent="10.63%"
-            app:layout_marginStartPercent="13.88%"
-            app:layout_marginTopPercent="64.17%"
-            app:layout_widthPercent="26.75%" />
-
-        <ImageView
-            android:id="@+id/imgRightTable"
-            android:src="@drawable/dcar_button_table_right_normal"
-            app:layout_heightPercent="10.63%"
-            app:layout_marginStartPercent="59.38%"
-            app:layout_marginTopPercent="64.17%"
-            app:layout_widthPercent="26.75%" />
-
-        <ImageView
-            android:id="@+id/imgCurtainRearLeft"
-            android:src="@drawable/dcar_button_panel1_left_normal"
-            app:layout_heightPercent="19.17%"
-            app:layout_marginStartPercent="15.88%"
-            app:layout_marginTopPercent="77.50%"
-            app:layout_widthPercent="12.88%" />
+        <ImageButton
+            android:id="@+id/dcar1_right_seat_up"
+            android:background="@drawable/dcar1_button_up"
+            app:layout_heightPercent="10.37%"
+            app:layout_marginStartPercent="58.38%"
+            app:layout_marginTopPercent="38.13%"
+            app:layout_widthPercent="6.22%" />
 
         <ImageButton
-            android:id="@+id/btnCurtainRearLeftUp"
-            android:background="@drawable/dcar_button_up"
-            app:layout_heightPercent="10.42%"
+            android:id="@+id/dcar1_right_seat_down"
+            android:background="@drawable/dcar1_button_down"
+            app:layout_heightPercent="10.37%"
+            app:layout_marginStartPercent="58.38%"
+            app:layout_marginTopPercent="48.75%"
+            app:layout_widthPercent="6.22%" />
+
+        <ImageView
+            android:id="@+id/dcar1_tv"
+            android:src="@drawable/dcar1_tv"
+            app:layout_heightPercent="16.20%"
+            app:layout_marginStartPercent="41.44%"
+            app:layout_marginTopPercent="20.74%"
+            app:layout_widthPercent="18.61%" />
+
+        <ImageView
+            android:id="@+id/dcar1_led_day"
+            android:src="@drawable/dcar1_led_day"
+            app:layout_heightPercent="21.02%"
+            app:layout_marginStartPercent="23.17%"
+            app:layout_marginTopPercent="52.31%"
+            app:layout_widthPercent="7.61%" />
+
+        <ImageView
+            android:id="@+id/dcar1_left_table"
+            android:src="@drawable/dcar1_left_table"
+            app:layout_heightPercent="9.44%"
+            app:layout_marginStartPercent="14.22%"
+            app:layout_marginTopPercent="64.72%"
+            app:layout_widthPercent="26.11%" />
+
+        <ImageView
+            android:id="@+id/dcar1_right_table"
+            android:src="@drawable/dcar1_right_table"
+            app:layout_heightPercent="9.44%"
+            app:layout_marginStartPercent="59.67%"
+            app:layout_marginTopPercent="64.72%"
+            app:layout_widthPercent="26.11%" />
+
+        <ImageView
+            android:id="@+id/dcar1_curtain_rear_left"
+            android:src="@drawable/dcar1_curtain_rear_left"
+            app:layout_heightPercent="19.26%"
+            app:layout_marginStartPercent="15.83%"
+            app:layout_marginTopPercent="77.41%"
+            app:layout_widthPercent="12.44%" />
+
+        <ImageButton
+            android:id="@+id/dcar1_curtain_rear_left_up"
+            android:background="@drawable/dcar1_button_up"
+            app:layout_heightPercent="10.37%"
             app:layout_marginStartPercent="19.00%"
             app:layout_marginTopPercent="76.25%"
-            app:layout_widthPercent="6.25%" />
+            app:layout_widthPercent="6.22%" />
 
         <ImageButton
-            android:id="@+id/btnCurtainRearLeftDown"
-            android:background="@drawable/dcar_button_down"
-            app:layout_heightPercent="10.42%"
+            android:id="@+id/dcar1_curtain_rear_left_down"
+            android:background="@drawable/dcar1_button_down"
+            app:layout_heightPercent="10.37%"
             app:layout_marginStartPercent="19.00%"
             app:layout_marginTopPercent="86.46%"
-            app:layout_widthPercent="6.25%" />
+            app:layout_widthPercent="6.22%" />
 
         <ImageView
-            android:id="@+id/imgCurtainRearRight"
-            android:src="@drawable/dcar_button_panel1_right_normal"
-            app:layout_heightPercent="19.17%"
-            app:layout_marginStartPercent="71.25%"
-            app:layout_marginTopPercent="77.50%"
-            app:layout_widthPercent="12.88%" />
+            android:id="@+id/dcar1_curtain_rear_right"
+            android:src="@drawable/dcar1_curtain_rear_right"
+            app:layout_heightPercent="18.70%"
+            app:layout_marginStartPercent="71.83%"
+            app:layout_marginTopPercent="77.78%"
+            app:layout_widthPercent="10.67%" />
 
         <ImageButton
-            android:id="@+id/btnCurtainRearRightUp"
-            android:background="@drawable/dcar_button_up"
-            app:layout_heightPercent="10.42%"
+            android:id="@+id/dcar1_curtain_rear_right_up"
+            android:background="@drawable/dcar1_button_up"
+            app:layout_heightPercent="10.37%"
             app:layout_marginStartPercent="74.00%"
             app:layout_marginTopPercent="77.08%"
-            app:layout_widthPercent="6.25%" />
+            app:layout_widthPercent="6.22%" />
 
         <ImageButton
-            android:id="@+id/btnCurtainRearRightDown"
-            android:background="@drawable/dcar_button_down"
-            app:layout_heightPercent="10.42%"
+            android:id="@+id/dcar1_curtain_rear_right_down"
+            android:background="@drawable/dcar1_button_down"
+            app:layout_heightPercent="10.37%"
             app:layout_marginStartPercent="74.00%"
             app:layout_marginTopPercent="87.29%"
-            app:layout_widthPercent="6.25%" />
+            app:layout_widthPercent="6.22%" />
 
         <ImageView
-            android:id="@+id/imgCurtainRearCenter"
-            android:src="@drawable/dcar_button_panel1_center_normal"
-            app:layout_heightPercent="14.79%"
-            app:layout_marginStartPercent="37.75%"
-            app:layout_marginTopPercent="77.50%"
-            app:layout_widthPercent="25.25%" />
+            android:id="@+id/dcar1_curtain_back"
+            android:src="@drawable/dcar1_curtain_back"
+            app:layout_heightPercent="13.61%"
+            app:layout_marginStartPercent="38.06%"
+            app:layout_marginTopPercent="77.69%"
+            app:layout_widthPercent="24.61%" />
 
         <ImageButton
-            android:id="@+id/btnCurtainRearCenterUp"
-            android:background="@drawable/dcar_button_up"
-            app:layout_heightPercent="10.42%"
+            android:id="@+id/dcar1_curtain_back_up"
+            android:background="@drawable/dcar1_button_up"
+            app:layout_heightPercent="10.37%"
             app:layout_marginStartPercent="47.25%"
             app:layout_marginTopPercent="75.42%"
-            app:layout_widthPercent="6.25%" />
+            app:layout_widthPercent="6.22%" />
 
         <ImageButton
-            android:id="@+id/btnCurtainRearCenterDown"
-            android:background="@drawable/dcar_button_down"
-            app:layout_heightPercent="10.42%"
+            android:id="@+id/dcar1_curtain_back_down"
+            android:background="@drawable/dcar1_button_down"
+            app:layout_heightPercent="10.37%"
             app:layout_marginStartPercent="47.25%"
             app:layout_marginTopPercent="85.63%"
-            app:layout_widthPercent="6.25%" />
+            app:layout_widthPercent="6.22%" />
 
         <Button
             android:id="@+id/btnSetting"
