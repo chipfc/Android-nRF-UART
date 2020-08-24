@@ -74,6 +74,7 @@ public class NPNConstants {
     public static String SETTING_REFKEY_NAME = "dcar_settings";
 
     public static String SETTING_BLE_MAC = "setting_tv_mac";
+    public static String SETTING_UI = "setting_ui";
 
 
 }

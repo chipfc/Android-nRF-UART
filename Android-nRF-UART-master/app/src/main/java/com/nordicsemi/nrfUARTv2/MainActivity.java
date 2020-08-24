@@ -893,7 +893,20 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                         final String data_voice = ubc_voice;
                         String messageSocket = "";
                         Log.d("DCAR_TEST", "Message: " + ubc_voice);
-                        if ((ubc_voice.indexOf("mở") >= 0 && ubc_voice.indexOf("rèm") >= 0)
+                        if(ubc_voice.indexOf("1") >=0 && ubc_voice.indexOf("4") >=0 && ubc_voice.indexOf("7") >=0){
+
+                            String mode = Helper.loadTVCode((MainActivity) mContext, NPNConstants.SETTING_UI);
+                            if(mode.equals("100") == true) mode = "300";
+                            else mode = "100";
+                            Helper.saveTVCode((MainActivity) mContext, NPNConstants.SETTING_UI, mode);
+                            if(Helper.loadTVCode((MainActivity) mContext, NPNConstants.SETTING_UI).equals("300")== true){
+                                initUI(UI_DCAR3);
+                            }else{
+                                initUI(UI_DCAR1);
+                            }
+
+                        }
+                        else if ((ubc_voice.indexOf("mở") >= 0 && ubc_voice.indexOf("rèm") >= 0)
                                 || (ubc_voice.indexOf("mở") >= 0 && ubc_voice.indexOf("game") >= 0)
                                 || (ubc_voice.indexOf("mở") >= 0 && ubc_voice.indexOf("cửa") >= 0)) {
                             messageSocket = "DCAR_CURTAIN_UP";
@@ -1089,7 +1102,13 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         // Set initial UI state
 
         // TODO: read UI from config
-        initUI(UI_DCAR3);
+        //initUI(UI_DCAR3);
+
+        if(Helper.loadTVCode((MainActivity) mContext, NPNConstants.SETTING_UI).equals("300")== true){
+            initUI(UI_DCAR3);
+        }else{
+            initUI(UI_DCAR1);
+        }
 
         initDeviceFirstState();
 
