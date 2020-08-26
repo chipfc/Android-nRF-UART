@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
@@ -156,7 +155,8 @@
             app:layout_heightPercent="29.54%"
             app:layout_marginStartPercent="66.51%"
             app:layout_marginTopPercent="37.41%"
-            app:layout_widthPercent="12.34%" />
+            app:layout_widthPercent="12.34%"
+            android:visibility="gone"/>
 
         <ImageButton
             android:id="@+id/dcar3_curtain_front_right_up"
@@ -164,7 +164,8 @@
             app:layout_heightPercent="7.50%"
             app:layout_marginStartPercent="70.16%"
             app:layout_marginTopPercent="41.39%"
-            app:layout_widthPercent="4.17%" />
+            app:layout_widthPercent="4.17%"
+            android:visibility="gone"/>
 
         <ImageButton
             android:id="@+id/dcar3_curtain_front_right_down"
@@ -172,7 +173,8 @@
             app:layout_heightPercent="7.50%"
             app:layout_marginStartPercent="70.16%"
             app:layout_marginTopPercent="49.35%"
-            app:layout_widthPercent="4.17%" />
+            app:layout_widthPercent="4.17%"
+            android:visibility="gone"/>
 
         <!-- dcar3_curtain_rear_left -->
         <ImageView
@@ -292,6 +294,15 @@
             app:layout_marginTopPercent="23.89%"
             app:layout_widthPercent="20.00%" />
 
+        <!-- dcar3_light_sky_stars -->
+        <ImageView
+            android:id="@+id/dcar3_light_sky_stars"
+            android:src="@drawable/dcar3_light_sky_stars"
+            app:layout_heightPercent="22.59%"
+            app:layout_marginStartPercent="26.93%"
+            app:layout_marginTopPercent="-0.65%"
+            app:layout_widthPercent="52.29%" />
+
         <!-- dcar3_light_ceiling -->
         <ImageView
             android:id="@+id/dcar3_light_ceiling"
@@ -301,14 +312,13 @@
             app:layout_marginTopPercent="0.00%"
             app:layout_widthPercent="62.60%" />
 
-        <!-- dcar3_light_sky_stars -->
-        <ImageView
-            android:id="@+id/dcar3_light_sky_stars"
-            android:src="@drawable/dcar3_light_sky_stars"
-            app:layout_heightPercent="22.59%"
-            app:layout_marginStartPercent="26.93%"
-            app:layout_marginTopPercent="-0.65%"
-            app:layout_widthPercent="52.29%" />
+        <ImageButton
+            android:id="@+id/dcar3_light_sky_stars_mask"
+            android:background="#00000000"
+            app:layout_heightPercent="24.35%"
+            app:layout_marginStartPercent="39.90%"
+            app:layout_marginTopPercent="0%"
+            app:layout_widthPercent="18.70%" />
 
         <!-- dcar3_tv -->
         <ImageView
@@ -331,7 +341,6 @@
         <ImageButton
             android:id="@+id/dcar3_center_table_up"
             android:background="@drawable/dcar3_button_up"
-            android:visibility="gone"
             app:layout_heightPercent="7.50%"
             app:layout_marginStartPercent="47.19%"
             app:layout_marginTopPercent="72.59%"
@@ -340,7 +349,6 @@
         <ImageButton
             android:id="@+id/dcar3_center_table_down"
             android:background="@drawable/dcar3_button_down"
-            android:visibility="gone"
             app:layout_heightPercent="7.50%"
             app:layout_marginStartPercent="47.19%"
             app:layout_marginTopPercent="80.56%"

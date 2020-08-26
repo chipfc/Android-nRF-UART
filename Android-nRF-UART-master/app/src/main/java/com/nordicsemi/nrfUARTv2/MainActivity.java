@@ -167,6 +167,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     private static final int INDEX_CURTAIN_REAR_CENTER = 4;
 
     private static final int INDEX_LEFT_TABLE = 0;
+    private static final int INDEX_CENTER_TABLE = 0;  // DCAR3
     private static final int INDEX_RIGHT_TABLE = 1;
 
     private static final int INDEX_TV = 8;
@@ -206,11 +207,17 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     ImageView imgRightTable;
     ImageView imgTV;
 
+    ImageView imgCenterTable;
+    ImageButton btnCenterTableUp;
+    ImageButton btnCenterTableDown;
+
     ImageView imgLightCeiling;
     ImageView imgLightTv;
     ImageView imgLightSkyStars;
     ImageView imgLightLed;
     ImageView imgLightWaterDrop;
+
+    ImageButton imgLightSkyStarsMask;
 
     String ipAddress = "";
 
@@ -304,6 +311,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
             imgLightSkyStars = findViewById(R.id.dcar3_light_sky_stars);
             imgLightLed = findViewById(R.id.dcar3_led_day);
 
+            imgLightSkyStarsMask = findViewById(R.id.dcar3_light_sky_stars_mask);
         }
 
         btnHomeSearchVoice.setOnClickListener(new View.OnClickListener() {
@@ -338,6 +346,8 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         imgLightSkyStars.setOnClickListener(this);
         imgLightLed.setOnClickListener(this);
 
+        imgLightSkyStarsMask.setOnClickListener(this);
+
         // DCAR3: Light water drops
         imgLightWaterDrop = findViewById(R.id.dcar3_light_water_drop);
         imgLightWaterDrop.setOnClickListener(this);
@@ -350,21 +360,18 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         btnCurtainRearCenterDown.setOnTouchListener(this);
 
         // DCAR1: table left & right
+        imgLeftTable = findViewById(R.id.dcar1_left_table);
+        imgLeftTable.setOnClickListener(this);
+
+        imgRightTable = findViewById(R.id.dcar1_right_table);
+        imgRightTable.setOnClickListener(this);
+
         // DCAR3: table center
-        if (ui == UI_DCAR1) {
-            imgLeftTable = findViewById(R.id.dcar1_left_table);
-            imgLeftTable.setOnClickListener(this);
-
-            imgRightTable = findViewById(R.id.dcar1_right_table);
-            imgRightTable.setOnClickListener(this);
-        } else if (ui == UI_DCAR3) {
-            imgLeftTable = findViewById(R.id.dcar3_center_table);
-            imgLeftTable.setOnClickListener(this);
-
-            // ignore null exception
-            imgRightTable = findViewById(R.id.dcar1_right_table);
-            imgRightTable.setOnClickListener(this);
-        }
+        imgCenterTable = findViewById(R.id.dcar3_center_table);
+        btnCenterTableUp = findViewById(R.id.dcar3_center_table_up);
+        btnCenterTableDown = findViewById(R.id.dcar3_center_table_down);
+        btnCenterTableUp.setOnTouchListener(this);
+        btnCenterTableDown.setOnTouchListener(this);
 
         btnSetting = findViewById(R.id.btnSetting);
         btnSetting.setOnLongClickListener(new View.OnLongClickListener() {
@@ -375,6 +382,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                 return true;
             }
         });
+
 
     }
 
@@ -492,7 +500,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                 deviceModels[INDEX_LIGHT_4X].configForSendData(SPEED_HIGH, 500);
                 cmd = NPNConstants.CMD_LIGHT_TOP_ON;
             }
-        } else if (vid == imgLightSkyStars.getId()) {
+        } else if (vid == imgLightSkyStars.getId() || vid == imgLightSkyStarsMask.getId()) {
 
             if (deviceModels[INDEX_LIGHT_CEILING].isOn()) {
                 imgLightSkyStars.setActivated(false);
@@ -774,6 +782,30 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                 cmd = NPNConstants.CMD_CURTAIN_REAR_CENTER_STOP;
             }
 
+        } else if (vid == btnCenterTableUp.getId()) {
+
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                imgCenterTable.setActivated(true);
+                deviceModels[INDEX_CENTER_TABLE].configForSendData(SPEED_HIGH, TOUCH_ACTION_DOWN_DELAY);
+                cmd = NPNConstants.CMD_TABLE_CENTER_UP;
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                imgCenterTable.setActivated(false);
+                deviceModels[INDEX_CENTER_TABLE].configForSendData(SPEED_STOP, TOUCH_ACTION_UP_DELAY);
+                cmd = NPNConstants.CMD_TABLE_CENTER_STOP;
+            }
+
+        } else if (vid == btnCenterTableDown.getId()) {
+
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                imgCenterTable.setActivated(true);
+                deviceModels[INDEX_CENTER_TABLE].configForSendData(SPEED_LOW, TOUCH_ACTION_DOWN_DELAY);
+                cmd = NPNConstants.CMD_TABLE_CENTER_DOWN;
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                imgCenterTable.setActivated(false);
+                deviceModels[INDEX_CENTER_TABLE].configForSendData(SPEED_STOP, TOUCH_ACTION_UP_DELAY);
+                cmd = NPNConstants.CMD_TABLE_CENTER_STOP;
+            }
+
         }
 
         Log.d(TAG, "CMD is:" + cmd);
@@ -893,20 +925,19 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                         final String data_voice = ubc_voice;
                         String messageSocket = "";
                         Log.d("DCAR_TEST", "Message: " + ubc_voice);
-                        if(ubc_voice.indexOf("1") >=0 && ubc_voice.indexOf("4") >=0 && ubc_voice.indexOf("7") >=0){
+                        if (ubc_voice.indexOf("1") >= 0 && ubc_voice.indexOf("4") >= 0 && ubc_voice.indexOf("7") >= 0) {
 
                             String mode = Helper.loadTVCode((MainActivity) mContext, NPNConstants.SETTING_UI);
-                            if(mode.equals("100") == true) mode = "300";
+                            if (mode.equals("100") == true) mode = "300";
                             else mode = "100";
                             Helper.saveTVCode((MainActivity) mContext, NPNConstants.SETTING_UI, mode);
-                            if(Helper.loadTVCode((MainActivity) mContext, NPNConstants.SETTING_UI).equals("300")== true){
+                            if (Helper.loadTVCode((MainActivity) mContext, NPNConstants.SETTING_UI).equals("300") == true) {
                                 initUI(UI_DCAR3);
-                            }else{
+                            } else {
                                 initUI(UI_DCAR1);
                             }
 
-                        }
-                        else if ((ubc_voice.indexOf("mở") >= 0 && ubc_voice.indexOf("rèm") >= 0)
+                        } else if ((ubc_voice.indexOf("mở") >= 0 && ubc_voice.indexOf("rèm") >= 0)
                                 || (ubc_voice.indexOf("mở") >= 0 && ubc_voice.indexOf("game") >= 0)
                                 || (ubc_voice.indexOf("mở") >= 0 && ubc_voice.indexOf("cửa") >= 0)) {
                             messageSocket = "DCAR_CURTAIN_UP";
@@ -1104,9 +1135,9 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         // TODO: read UI from config
         //initUI(UI_DCAR3);
 
-        if(Helper.loadTVCode((MainActivity) mContext, NPNConstants.SETTING_UI).equals("300")== true){
+        if (Helper.loadTVCode((MainActivity) mContext, NPNConstants.SETTING_UI).equals("300") == true) {
             initUI(UI_DCAR3);
-        }else{
+        } else {
             initUI(UI_DCAR1);
         }
 
