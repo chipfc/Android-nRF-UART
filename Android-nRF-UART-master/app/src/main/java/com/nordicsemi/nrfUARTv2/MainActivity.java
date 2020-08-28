@@ -273,6 +273,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
             imgLightTv = findViewById(R.id.dcar1_light_tv);
             imgLightSkyStars = findViewById(R.id.dcar1_light_sky_stars);
             imgLightLed = findViewById(R.id.dcar1_led_day);
+
             btnSetting = findViewById(R.id.btnSetting);
 
         } else if (ui == UI_DCAR3) {
@@ -312,12 +313,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
             imgLightSkyStars = findViewById(R.id.dcar3_light_sky_stars);
             imgLightLed = findViewById(R.id.dcar3_led_day);
 
-            imgLightSkyStarsMask = findViewById(R.id.dcar3_light_sky_stars_mask);
-
             btnSetting = findViewById(R.id.btnSetting3);
-
-
-            imgLightSkyStarsMask.setOnClickListener(this);
         }
 
         btnHomeSearchVoice.setOnClickListener(new View.OnClickListener() {
@@ -352,8 +348,9 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         imgLightSkyStars.setOnClickListener(this);
         imgLightLed.setOnClickListener(this);
 
-
-
+        // DCAR1: imgLightSkyStarsMask
+        imgLightSkyStarsMask = findViewById(R.id.dcar3_light_sky_stars_mask);
+        imgLightSkyStarsMask.setOnClickListener(this);
 
         // DCAR3: Light water drops
         imgLightWaterDrop = findViewById(R.id.dcar3_light_water_drop);

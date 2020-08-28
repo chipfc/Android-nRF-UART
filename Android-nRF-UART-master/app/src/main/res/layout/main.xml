@@ -396,6 +396,13 @@
             app:layout_marginTopPercent="57%"
             app:layout_widthPercent="7%" />
 
+        <ImageView
+            android:id="@+id/dcar1_light_tv"
+            android:src="@drawable/dcar1_light_tv"
+            app:layout_heightPercent="26.76%"
+            app:layout_marginStartPercent="22.39%"
+            app:layout_marginTopPercent="2.31%"
+            app:layout_widthPercent="58.22%" />
 
         <ImageView
             android:id="@+id/dcar1_light_ceiling"
@@ -404,15 +411,6 @@
             app:layout_marginStartPercent="14.17%"
             app:layout_marginTopPercent="7.04%"
             app:layout_widthPercent="71.78%" />
-
-
-        <ImageView
-            android:id="@+id/dcar1_light_tv"
-            android:src="@drawable/dcar1_light_tv"
-            app:layout_heightPercent="26.76%"
-            app:layout_marginStartPercent="22.39%"
-            app:layout_marginTopPercent="2.31%"
-            app:layout_widthPercent="58.22%" />
 
         <ImageView
             android:id="@+id/dcar1_light_sky_stars"
