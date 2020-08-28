@@ -367,6 +367,14 @@
             app:layout_marginTopPercent="57%"
             app:layout_widthPercent="7%" />
 
+        <Button
+            android:id="@+id/btnSetting3"
+            android:background="#00ffffff"
+            app:layout_heightPercent="10.42%"
+            app:layout_marginStartPercent="0%"
+            app:layout_marginTopPercent="89.58%"
+            app:layout_widthPercent="6.25%" />
+
     </android.support.percent.PercentRelativeLayout>
 
     <android.support.percent.PercentRelativeLayout
