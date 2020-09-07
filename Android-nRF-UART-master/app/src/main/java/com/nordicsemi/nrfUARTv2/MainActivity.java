@@ -488,32 +488,38 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
 
             }
 
-        } else if (vid == imgLightTv.getId()) {
-
-            if (deviceModels[INDEX_LIGHT_4X].isOn()) {
-                imgLightTv.setActivated(false);
-
-                deviceModels[INDEX_LIGHT_4X].setOff();
-                deviceModels[INDEX_LIGHT_4X].configForSendData(SPEED_LOW, 500);
-                cmd = NPNConstants.CMD_LIGHT_TOP_OFF;
-
-            } else {
-                imgLightTv.setActivated(true);
-
-                deviceModels[INDEX_LIGHT_4X].setOn();
-                deviceModels[INDEX_LIGHT_4X].configForSendData(SPEED_HIGH, 500);
-                cmd = NPNConstants.CMD_LIGHT_TOP_ON;
-            }
-        } else if (vid == imgLightSkyStars.getId() || vid == imgLightSkyStarsMask.getId()) {
+        }
+//        else if (vid == imgLightTv.getId()) {
+//
+//            if (deviceModels[INDEX_LIGHT_4X].isOn()) {
+//                imgLightTv.setActivated(false);
+//
+//                deviceModels[INDEX_LIGHT_4X].setOff();
+//                deviceModels[INDEX_LIGHT_4X].configForSendData(SPEED_LOW, 500);
+//                cmd = NPNConstants.CMD_LIGHT_TOP_OFF;
+//
+//            } else {
+//                imgLightTv.setActivated(true);
+//
+//                deviceModels[INDEX_LIGHT_4X].setOn();
+//                deviceModels[INDEX_LIGHT_4X].configForSendData(SPEED_HIGH, 500);
+//                cmd = NPNConstants.CMD_LIGHT_TOP_ON;
+//            }
+//        }
+//
+        else if (vid == imgLightSkyStars.getId() || vid == imgLightSkyStarsMask.getId()
+                || vid == imgLightTv.getId()) {
 
             if (deviceModels[INDEX_LIGHT_CEILING].isOn()) {
                 imgLightSkyStars.setActivated(false);
+                imgLightTv.setActivated(false);
 
                 deviceModels[INDEX_LIGHT_CEILING].setOff();
                 deviceModels[INDEX_LIGHT_CEILING].configForSendData(SPEED_LOW, 500);
                 cmd = NPNConstants.CMD_LIGHT_CEILLING_OFF;
             } else {
                 imgLightSkyStars.setActivated(true);
+                imgLightTv.setActivated(true);
 
                 deviceModels[INDEX_LIGHT_CEILING].setOn();
                 deviceModels[INDEX_LIGHT_CEILING].configForSendData(SPEED_HIGH, 500);
