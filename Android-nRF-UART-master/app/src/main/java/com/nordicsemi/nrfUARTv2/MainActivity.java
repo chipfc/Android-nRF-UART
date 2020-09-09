@@ -550,12 +550,16 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                 deviceModels[INDEX_LIGHT_WATER_DROP].setOff();
                 deviceModels[INDEX_LIGHT_WATER_DROP].configForSendData(SPEED_LOW, 500);
                 cmd = NPNConstants.CMD_LIGHT_WATER_DROP_OFF;
+
+
             } else {
                 imgLightWaterDrop.setActivated(true);
 
                 deviceModels[INDEX_LIGHT_WATER_DROP].setOn();
                 deviceModels[INDEX_LIGHT_WATER_DROP].configForSendData(SPEED_HIGH, 500);
                 cmd = NPNConstants.CMD_LIGHT_WATER_DROP_ON;
+
+
             }
 
         } else if (vid == imgLeftTable.getId()) {

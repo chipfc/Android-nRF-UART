@@ -22,8 +22,12 @@ public class NPNConstants {
     public static final String CMD_LIGHT_TOP_ON = "LIGHT_TOP_ON";
     public static final String CMD_LIGHT_TOP_OFF = "LIGHT_TOP_OFF";
 
-    public static final String CMD_LIGHT_WATER_DROP_ON = "LIGHT_DROP_ON";
-    public static final String CMD_LIGHT_WATER_DROP_OFF = "LIGHT_DROP_OFF";
+    //public static final String CMD_LIGHT_WATER_DROP_ON = "LIGHT_DROP_ON";
+    //public static final String CMD_LIGHT_WATER_DROP_OFF = "LIGHT_DROP_OFF";
+
+    public static final String CMD_LIGHT_WATER_DROP_ON = "LIGHT_TOP_ON";
+    public static final String CMD_LIGHT_WATER_DROP_OFF = "LIGHT_TOP_OFF";
+
 
     public static final String CMD_LIGHT_CEILLING_ON = "LIGHT_CEIL_ON";
     public static final String CMD_LIGHT_CEILLING_OFF = "LIGHT_CEIL_OFF";
@@ -37,9 +41,15 @@ public class NPNConstants {
     public static final String CMD_TABLE_RIGHT_ON = "TABLE_RIGHT_ON";
     public static final String CMD_TABLE_RIGHT_OFF = "TABLE_RIGHT_OFF";
 
-    public static final String CMD_TABLE_CENTER_UP = "TABLE_CENTER_UP";
-    public static final String CMD_TABLE_CENTER_DOWN = "TABLE_CENTER_DOWN";
-    public static final String CMD_TABLE_CENTER_STOP = "TABLE_CENTER_STOP";
+    //public static final String CMD_TABLE_CENTER_UP = "TABLE_CENTER_UP";
+    //public static final String CMD_TABLE_CENTER_DOWN = "TABLE_CENTER_DOWN";
+    //public static final String CMD_TABLE_CENTER_STOP = "TABLE_CENTER_STOP";
+
+    public static final String CMD_TABLE_CENTER_UP = "CUR_REAR_CR_UP";
+    public static final String CMD_TABLE_CENTER_DOWN = "CUR_REAR_CR_DOWN";
+    public static final String CMD_TABLE_CENTER_STOP = "CUR_REAR_CR_STOP";
+
+
 
     public static final String CMD_TIVI_ON = "TIVI_ON";
     public static final String CMD_TIVI_OFF = "TIVI_OFF";
