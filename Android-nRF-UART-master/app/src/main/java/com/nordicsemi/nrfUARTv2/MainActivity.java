@@ -830,22 +830,44 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     }
 
     void initDeviceFirstState() {
-        /* Always turn on all lights */
+
         deviceModels[INDEX_LIGHT_4X].setOn();
-        deviceModels[INDEX_LIGHT_4X].configForSendData(SPEED_HIGH, 1000);
+        //deviceModels[INDEX_LIGHT_4X].configForSendData(SPEED_HIGH, 50);
         imgLightTv.setActivated(true);
 
         deviceModels[INDEX_LIGHT_CEILING].setOn();
-        deviceModels[INDEX_LIGHT_CEILING].configForSendData(SPEED_HIGH, 1000);
+        //deviceModels[INDEX_LIGHT_CEILING].configForSendData(SPEED_HIGH, 50);
         imgLightSkyStars.setActivated(true);
 
         deviceModels[INDEX_LIGHT_DRAWERS].setOn();
-        deviceModels[INDEX_LIGHT_DRAWERS].configForSendData(SPEED_HIGH, 1000);
+        //deviceModels[INDEX_LIGHT_DRAWERS].configForSendData(SPEED_HIGH, 50);
         imgLightLed.setActivated(true);
 
         deviceModels[INDEX_LIGHT_SIDE].setOn();
-        deviceModels[INDEX_LIGHT_SIDE].configForSendData(SPEED_HIGH, 1000);
+        //deviceModels[INDEX_LIGHT_SIDE].configForSendData(SPEED_HIGH, 50);
         imgLightCeiling.setActivated(true);
+
+        imgLightWaterDrop.setActivated(true);
+
+
+
+
+        /* Always turn on all lights */
+//        deviceModels[INDEX_LIGHT_4X].setOn();
+//        deviceModels[INDEX_LIGHT_4X].configForSendData(SPEED_HIGH, 1000);
+//        imgLightTv.setActivated(true);
+//
+//        deviceModels[INDEX_LIGHT_CEILING].setOn();
+//        deviceModels[INDEX_LIGHT_CEILING].configForSendData(SPEED_HIGH, 1000);
+//        imgLightSkyStars.setActivated(true);
+//
+//        deviceModels[INDEX_LIGHT_DRAWERS].setOn();
+//        deviceModels[INDEX_LIGHT_DRAWERS].configForSendData(SPEED_HIGH, 1000);
+//        imgLightLed.setActivated(true);
+//
+//        deviceModels[INDEX_LIGHT_SIDE].setOn();
+//        deviceModels[INDEX_LIGHT_SIDE].configForSendData(SPEED_HIGH, 1000);
+//        imgLightCeiling.setActivated(true);
 
         /* Always close all curtains */
         deviceModels[INDEX_CURTAIN_FRONT_LEFT].configForSendData(SPEED_LOW, 1000);
@@ -1046,6 +1068,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                         //deviceModels[INDEX_LIGHT_SIDE].configForSendData(SPEED_HIGH, 50);
                         imgLightCeiling.setActivated(true);
 
+                        imgLightWaterDrop.setActivated(true);
                         break;
 
                     case "DCAR_LED_OFF":
@@ -1064,7 +1087,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                         deviceModels[INDEX_LIGHT_SIDE].setOff();
                         //deviceModels[INDEX_LIGHT_SIDE].configForSendData(SPEED_LOW, 50);
                         imgLightCeiling.setActivated(false);
-
+                        imgLightWaterDrop.setActivated(false);
                         break;
                 }
             }

@@ -37,17 +37,19 @@ public class NPNConstants {
 
     public static final String CMD_TABLE_LEFT_ON = "TABLE_LEFT_ON";
     public static final String CMD_TABLE_LEFT_OFF = "TABLE_LEFT_OFF";
+    public static final String CMD_TABLE_LEFT_STOP = "TABLE_LEFT_STOP";
 
     public static final String CMD_TABLE_RIGHT_ON = "TABLE_RIGHT_ON";
     public static final String CMD_TABLE_RIGHT_OFF = "TABLE_RIGHT_OFF";
+    public static final String CMD_TABLE_RIGHT_STOP = "TABLE_RIGHT_STOP";
 
     //public static final String CMD_TABLE_CENTER_UP = "TABLE_CENTER_UP";
     //public static final String CMD_TABLE_CENTER_DOWN = "TABLE_CENTER_DOWN";
     //public static final String CMD_TABLE_CENTER_STOP = "TABLE_CENTER_STOP";
 
-    public static final String CMD_TABLE_CENTER_UP = "CUR_REAR_CR_UP";
-    public static final String CMD_TABLE_CENTER_DOWN = "CUR_REAR_CR_DOWN";
-    public static final String CMD_TABLE_CENTER_STOP = "CUR_REAR_CR_STOP";
+    public static final String CMD_TABLE_CENTER_UP = "TABLE_LEFT_ON";
+    public static final String CMD_TABLE_CENTER_DOWN = "TABLE_LEFT_OFF";
+    public static final String CMD_TABLE_CENTER_STOP = "TABLE_LEFT_STOP";
 
 
 
