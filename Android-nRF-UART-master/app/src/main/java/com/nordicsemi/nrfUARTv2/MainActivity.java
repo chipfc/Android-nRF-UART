@@ -21,6 +21,8 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+//https://gourmet-technology-crypto.jp/en/technology/android-things-on-raspberry-pi3-uart-and-bluetooth-coexistence/
+
 package com.nordicsemi.nrfUARTv2;
 
 import java.io.File;
@@ -230,9 +232,11 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
 
     private static final int UI_DCAR1 = 100;
     private static final int UI_DCAR3 = 300;
+    int currentUI = -1;
 
     @SuppressLint("ClickableViewAccessibility")
     private void initUI(int ui) {
+        currentUI = ui;
 
         RelativeLayout ui_dcar1 = findViewById(R.id.ui_dcar1);
         RelativeLayout ui_dcar3 = findViewById(R.id.ui_dcar3);
@@ -489,26 +493,43 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
             }
 
         }
-//        else if (vid == imgLightTv.getId()) {
-//
-//            if (deviceModels[INDEX_LIGHT_4X].isOn()) {
-//                imgLightTv.setActivated(false);
-//
-//                deviceModels[INDEX_LIGHT_4X].setOff();
-//                deviceModels[INDEX_LIGHT_4X].configForSendData(SPEED_LOW, 500);
-//                cmd = NPNConstants.CMD_LIGHT_TOP_OFF;
-//
-//            } else {
-//                imgLightTv.setActivated(true);
-//
-//                deviceModels[INDEX_LIGHT_4X].setOn();
-//                deviceModels[INDEX_LIGHT_4X].configForSendData(SPEED_HIGH, 500);
-//                cmd = NPNConstants.CMD_LIGHT_TOP_ON;
-//            }
-//        }
-//
-        else if (vid == imgLightSkyStars.getId() || vid == imgLightSkyStarsMask.getId()
-                || vid == imgLightTv.getId()) {
+        else if (vid == imgLightTv.getId() && currentUI == UI_DCAR1 ) {
+
+            if (deviceModels[INDEX_LIGHT_4X].isOn()) {
+                imgLightTv.setActivated(false);
+
+                deviceModels[INDEX_LIGHT_4X].setOff();
+                deviceModels[INDEX_LIGHT_4X].configForSendData(SPEED_LOW, 500);
+                cmd = NPNConstants.CMD_LIGHT_TOP_OFF;
+
+            } else {
+                imgLightTv.setActivated(true);
+
+                deviceModels[INDEX_LIGHT_4X].setOn();
+                deviceModels[INDEX_LIGHT_4X].configForSendData(SPEED_HIGH, 500);
+                cmd = NPNConstants.CMD_LIGHT_TOP_ON;
+            }
+        }
+        else if ((vid == imgLightSkyStars.getId() || vid == imgLightSkyStarsMask.getId()) && currentUI == UI_DCAR1) {
+
+            if (deviceModels[INDEX_LIGHT_CEILING].isOn()) {
+                imgLightSkyStars.setActivated(false);
+
+
+                deviceModels[INDEX_LIGHT_CEILING].setOff();
+                deviceModels[INDEX_LIGHT_CEILING].configForSendData(SPEED_LOW, 500);
+                cmd = NPNConstants.CMD_LIGHT_CEILLING_OFF;
+            } else {
+                imgLightSkyStars.setActivated(true);
+
+                deviceModels[INDEX_LIGHT_CEILING].setOn();
+                deviceModels[INDEX_LIGHT_CEILING].configForSendData(SPEED_HIGH, 500);
+                cmd = NPNConstants.CMD_LIGHT_CEILLING_ON;
+            }
+
+        }
+        else if ((vid == imgLightSkyStars.getId() || vid == imgLightSkyStarsMask.getId()
+                || vid == imgLightTv.getId()) && currentUI == UI_DCAR3) {
 
             if (deviceModels[INDEX_LIGHT_CEILING].isOn()) {
                 imgLightSkyStars.setActivated(false);
@@ -1006,9 +1027,9 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                             } else if (messageSocket.equals("DCAR_CURTAIN_DOWN")) {
                                 talkToMe("Cửa sổ đang đóng");
                             } else if (messageSocket.equals("DCAR_LED_ON")) {
-                                talkToMe("Đèn đã bật");
+                                talkToMe("Đèn đang bật");
                             } else if (messageSocket.equals("DCAR_LED_OFF")) {
-                                talkToMe("Đèn đã tắt");
+                                talkToMe("Đèn đang tắt");
                             } else if (messageSocket.equals("TIVI_ON")) {
                                 talkToMe("Đang khởi động tivi");
                             } else if (messageSocket.equals("TIVI_OFF")) {
@@ -1248,7 +1269,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
 
         //Handler events that received from UART service 
         public void handleMessage(Message msg) {
-
+            Log.d(TAG, "Receive a mesage " + msg);
         }
     };
     Timer reconnectTimer;

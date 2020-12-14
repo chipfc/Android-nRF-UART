@@ -345,6 +345,7 @@ public class UartService extends Service {
         }
         RxChar.setValue(value);
     	boolean status = mBluetoothGatt.writeCharacteristic(RxChar);
+
     	
         Log.d(TAG, "write TXchar - status=" + status);  
     }
