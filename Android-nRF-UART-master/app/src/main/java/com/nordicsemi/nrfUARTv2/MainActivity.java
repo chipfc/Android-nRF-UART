@@ -1290,6 +1290,17 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         reconnectTimer.schedule(aTask, 5000, 5000);
     }
 
+    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
     private boolean isBLEConnected = false;
     private final BroadcastReceiver UARTStatusChangeReceiver = new BroadcastReceiver() {
 
@@ -1350,10 +1361,13 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                 runOnUiThread(new Runnable() {
                     public void run() {
                         try {
-                            String text = new String(txValue, "UTF-8");
-                            String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
-                            listAdapter.add("[" + currentDateTimeString + "] RX: " + text);
-                            messageListView.smoothScrollToPosition(listAdapter.getCount() - 1);
+                            //String text = new String(txValue, "UTF-8");
+                            //Log.d("DCAR", "Received: " + text);
+                            Log.d("DCAR", "Received: " + bytesToHex(txValue));
+
+                            //String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
+                            //listAdapter.add("[" + currentDateTimeString + "] RX: " + text);
+                            //messageListView.smoothScrollToPosition(listAdapter.getCount() - 1);
 
                         } catch (Exception e) {
                             Log.e(TAG, e.toString());
