@@ -31,6 +31,7 @@ import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -845,10 +846,34 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
 
         Log.d(TAG, "CMD is:" + cmd);
         if (cmd.length() > 0) {
-            sendBLEData("#" + cmd + "!");
+            cmdQueue.add(cmd);
+            //sendBLEData("#" + cmd + "!");
         }
         return false;
     }
+    private List<String> cmdQueue = new ArrayList<>();
+    Timer queueTimer;
+    TimerTask queueTask;
+    private void setupQueueTimer(){
+        queueTimer = new Timer();
+        queueTask = new TimerTask() {
+            @Override
+            public void run() {
+                if(cmdQueue.size() > 2){
+                    for(int i = 0; i < cmdQueue.size() - 2; i++){
+                        cmdQueue.remove(0);
+                    }
+                }
+                if(cmdQueue.size() > 0){
+                    String cmd = cmdQueue.get(0);
+                    sendBLEData("#" + cmd + "!");
+                    cmdQueue.remove(0);
+                }
+            }
+        };
+        queueTimer.schedule(queueTask,100,200);
+    }
+
 
     void initDeviceFirstState() {
 
@@ -1221,6 +1246,8 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         checkData.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
         //start it so that it returns the result
         startActivityForResult(checkData, DATA_CHECKING);
+
+        setupQueueTimer();
     }
 
     private void sendBLEData(String message) {
