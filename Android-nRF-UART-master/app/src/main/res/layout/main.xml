@@ -156,7 +156,7 @@
             app:layout_marginStartPercent="66.51%"
             app:layout_marginTopPercent="37.41%"
             app:layout_widthPercent="12.34%"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
 
         <ImageButton
             android:id="@+id/dcar3_curtain_front_right_up"
@@ -165,7 +165,7 @@
             app:layout_marginStartPercent="70.16%"
             app:layout_marginTopPercent="41.39%"
             app:layout_widthPercent="4.17%"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
 
         <ImageButton
             android:id="@+id/dcar3_curtain_front_right_down"
@@ -174,7 +174,7 @@
             app:layout_marginStartPercent="70.16%"
             app:layout_marginTopPercent="49.35%"
             app:layout_widthPercent="4.17%"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
 
         <!-- dcar3_curtain_rear_left -->
         <ImageView
