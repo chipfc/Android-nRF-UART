@@ -1216,13 +1216,13 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         // Set initial UI state
 
         // TODO: read UI from config
-        initUI(UI_DCAR3);
+        //initUI(UI_DCAR3);
 
-//        if (Helper.loadTVCode((MainActivity) mContext, NPNConstants.SETTING_UI).equals("300") == true) {
-//            initUI(UI_DCAR3);
-//        } else {
-//            initUI(UI_DCAR1);
-//        }
+        if (Helper.loadTVCode((MainActivity) mContext, NPNConstants.SETTING_UI).equals("300") == true) {
+            initUI(UI_DCAR3);
+        } else {
+            initUI(UI_DCAR1);
+        }
 
         initDeviceFirstState();
 
