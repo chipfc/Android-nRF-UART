@@ -4,7 +4,7 @@ android {
 
 
     defaultConfig {
-        applicationId "com.dcar.nordicsemi.nrfUARTv2"
+        applicationId "solar.z.ble.setting"
         minSdkVersion 18
         targetSdkVersion 26
     }
@@ -22,4 +22,5 @@ dependencies {
     compile 'com.android.support:support-v4:23.0.0'
     compile 'com.android.support:percent:23.2.1'
     compile 'com.squareup.okhttp:okhttp:2.4.0'
+    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
 }

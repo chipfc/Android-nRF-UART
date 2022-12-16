@@ -31,8 +31,10 @@ import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -59,6 +61,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -77,8 +80,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -113,6 +119,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     private UartService mService = null;
     private BluetoothDevice mDevice = null;
     private BluetoothAdapter mBtAdapter = null;
+
     private ListView messageListView;
     private ArrayAdapter<String> listAdapter;
     private Button btnConnectDisconnect, btnSend;
@@ -236,164 +243,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     int currentUI = -1;
 
     @SuppressLint("ClickableViewAccessibility")
-    private void initUI(int ui) {
-        currentUI = ui;
 
-        RelativeLayout ui_dcar1 = findViewById(R.id.ui_dcar1);
-        RelativeLayout ui_dcar3 = findViewById(R.id.ui_dcar3);
-
-        if (ui == UI_DCAR1) {
-            ui_dcar1.setVisibility(View.VISIBLE);
-            ui_dcar3.setVisibility(View.GONE);
-
-            btnHomeSearchVoice = findViewById(R.id.btn_home_search_voice);
-
-            imgLeftSeat = findViewById(R.id.dcar1_left_seat);
-            btnLeftSeatUp = findViewById(R.id.dcar1_left_seat_up);
-            btnLeftSeatDown = findViewById(R.id.dcar1_left_seat_down);
-
-            imgRightSeat = findViewById(R.id.dcar1_right_seat);
-            btnRightSeatUp = findViewById(R.id.dcar1_right_seat_up);
-            btnRightSeatDown = findViewById(R.id.dcar1_right_seat_down);
-
-            imgCurtainFrontLeft = findViewById(R.id.dcar1_curtain_front_left);
-            btnCertainFrontLeftUp = findViewById(R.id.dcar1_curtain_front_left_up);
-            btnCertainFrontLeftDown = findViewById(R.id.dcar1_curtain_front_left_down);
-
-            imgCurtainFrontRight = findViewById(R.id.dcar1_curtain_front_right);
-            btnCertainFrontRightUp = findViewById(R.id.dcar1_curtain_front_right_up);
-            btnCertainFrontRightDown = findViewById(R.id.dcar1_curtain_front_right_down);
-
-            imgCurtainRearLeft = findViewById(R.id.dcar1_curtain_rear_left);
-            btnCurtainRearLeftUp = findViewById(R.id.dcar1_curtain_rear_left_up);
-            btnCurtainRearLeftDown = findViewById(R.id.dcar1_curtain_rear_left_down);
-
-            imgCurtainRearRight = findViewById(R.id.dcar1_curtain_rear_right);
-            btnCurtainRearRightUp = findViewById(R.id.dcar1_curtain_rear_right_up);
-            btnCurtainRearRightDown = findViewById(R.id.dcar1_curtain_rear_right_down);
-
-            imgTV = findViewById(R.id.dcar1_tv);
-
-            imgLightCeiling = findViewById(R.id.dcar1_light_ceiling);
-            imgLightTv = findViewById(R.id.dcar1_light_tv);
-            imgLightSkyStars = findViewById(R.id.dcar1_light_sky_stars);
-            imgLightLed = findViewById(R.id.dcar1_led_day);
-
-            btnSetting = findViewById(R.id.btnSetting);
-
-        } else if (ui == UI_DCAR3) {
-            ui_dcar1.setVisibility(View.GONE);
-            ui_dcar3.setVisibility(View.VISIBLE);
-
-            btnHomeSearchVoice = findViewById(R.id.dcar3_home_search_voice);
-
-            imgLeftSeat = findViewById(R.id.dcar3_left_seat);
-            btnLeftSeatUp = findViewById(R.id.dcar3_left_seat_up);
-            btnLeftSeatDown = findViewById(R.id.dcar3_left_seat_down);
-
-            imgRightSeat = findViewById(R.id.dcar3_right_seat);
-            btnRightSeatUp = findViewById(R.id.dcar3_right_seat_up);
-            btnRightSeatDown = findViewById(R.id.dcar3_right_seat_down);
-
-            imgCurtainFrontLeft = findViewById(R.id.dcar3_curtain_front_left);
-            btnCertainFrontLeftUp = findViewById(R.id.dcar3_curtain_front_left_up);
-            btnCertainFrontLeftDown = findViewById(R.id.dcar3_curtain_front_left_down);
-
-            imgCurtainFrontRight = findViewById(R.id.dcar3_curtain_front_right);
-            btnCertainFrontRightUp = findViewById(R.id.dcar3_curtain_front_right_up);
-            btnCertainFrontRightDown = findViewById(R.id.dcar3_curtain_front_right_down);
-
-            imgCurtainRearLeft = findViewById(R.id.dcar3_curtain_rear_left);
-            btnCurtainRearLeftUp = findViewById(R.id.dcar3_curtain_rear_left_up);
-            btnCurtainRearLeftDown = findViewById(R.id.dcar3_curtain_rear_left_down);
-
-            imgCurtainRearRight = findViewById(R.id.dcar3_curtain_rear_right);
-            btnCurtainRearRightUp = findViewById(R.id.dcar3_curtain_rear_right_up);
-            btnCurtainRearRightDown = findViewById(R.id.dcar3_curtain_rear_right_down);
-
-            imgTV = findViewById(R.id.dcar3_tv);
-
-            imgLightCeiling = findViewById(R.id.dcar3_light_ceiling);
-            imgLightTv = findViewById(R.id.dcar3_light_tv);
-            imgLightSkyStars = findViewById(R.id.dcar3_light_sky_stars);
-            imgLightLed = findViewById(R.id.dcar3_led_day);
-
-            btnSetting = findViewById(R.id.btnSetting3);
-        }
-
-        btnHomeSearchVoice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startVoiceInput();
-            }
-        });
-
-        btnLeftSeatUp.setOnTouchListener(this);
-        btnLeftSeatDown.setOnTouchListener(this);
-
-        btnRightSeatUp.setOnTouchListener(this);
-        btnRightSeatDown.setOnTouchListener(this);
-
-        btnCertainFrontLeftUp.setOnTouchListener(this);
-        btnCertainFrontLeftDown.setOnTouchListener(this);
-
-        btnCertainFrontRightUp.setOnTouchListener(this);
-        btnCertainFrontRightDown.setOnTouchListener(this);
-
-        btnCurtainRearLeftUp.setOnTouchListener(this);
-        btnCurtainRearLeftDown.setOnTouchListener(this);
-
-        btnCurtainRearRightUp.setOnTouchListener(this);
-        btnCurtainRearRightDown.setOnTouchListener(this);
-
-        imgTV.setOnClickListener(this);
-
-        imgLightCeiling.setOnClickListener(this);
-        imgLightTv.setOnClickListener(this);
-        imgLightSkyStars.setOnClickListener(this);
-        imgLightLed.setOnClickListener(this);
-
-        // DCAR1: imgLightSkyStarsMask
-        imgLightSkyStarsMask = findViewById(R.id.dcar3_light_sky_stars_mask);
-        imgLightSkyStarsMask.setOnClickListener(this);
-
-        // DCAR3: Light water drops
-        imgLightWaterDrop = findViewById(R.id.dcar3_light_water_drop);
-        imgLightWaterDrop.setOnClickListener(this);
-
-        // DCAR1: Curtain Back
-        imgCurtainRearCenter = findViewById(R.id.dcar1_curtain_back);
-        btnCurtainRearCenterUp = findViewById(R.id.dcar1_curtain_back_up);
-        btnCurtainRearCenterDown = findViewById(R.id.dcar1_curtain_back_down);
-        btnCurtainRearCenterUp.setOnTouchListener(this);
-        btnCurtainRearCenterDown.setOnTouchListener(this);
-
-        // DCAR1: table left & right
-        imgLeftTable = findViewById(R.id.dcar1_left_table);
-        imgLeftTable.setOnClickListener(this);
-
-        imgRightTable = findViewById(R.id.dcar1_right_table);
-        imgRightTable.setOnClickListener(this);
-
-        // DCAR3: table center
-        imgCenterTable = findViewById(R.id.dcar3_center_table);
-        btnCenterTableUp = findViewById(R.id.dcar3_center_table_up);
-        btnCenterTableDown = findViewById(R.id.dcar3_center_table_down);
-        btnCenterTableUp.setOnTouchListener(this);
-        btnCenterTableDown.setOnTouchListener(this);
-
-
-        btnSetting.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Intent newIntent = new Intent(MainActivity.this, DeviceListActivity.class);
-                startActivityForResult(newIntent, REQUEST_SELECT_DEVICE);
-                return true;
-            }
-        });
-
-
-    }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
@@ -1014,9 +864,9 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                             else mode = "100";
                             Helper.saveTVCode((MainActivity) mContext, NPNConstants.SETTING_UI, mode);
                             if (Helper.loadTVCode((MainActivity) mContext, NPNConstants.SETTING_UI).equals("300") == true) {
-                                initUI(UI_DCAR3);
+                                //initUI(UI_DCAR3);
                             } else {
-                                initUI(UI_DCAR1);
+                                //initUI(UI_DCAR1);
                             }
 
                         } else if ((ubc_voice.indexOf("mở") >= 0 && ubc_voice.indexOf("rèm") >= 0)
@@ -1213,41 +1063,17 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
             }
         });
 
-        // Set initial UI state
 
-        // TODO: read UI from config
-        //initUI(UI_DCAR3);
-
-        if (Helper.loadTVCode((MainActivity) mContext, NPNConstants.SETTING_UI).equals("300") == true) {
-            initUI(UI_DCAR3);
-        } else {
-            initUI(UI_DCAR1);
-        }
-
-        initDeviceFirstState();
-
-//        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-//            @Override
-//            public void uncaughtException(Thread t, Throwable e) {
-//                System.exit(1);
-//            }
-//        });
 
 
         initUiFlags();
         goFullscreen();
-        setupUpdateTimer();
-        //installApk();
+
         checkLocationPermission();
 
-        //create an Intent
-        Intent checkData = new Intent();
-        //set it up to check for tts data
-        checkData.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-        //start it so that it returns the result
-        startActivityForResult(checkData, DATA_CHECKING);
+        populateList();
 
-        setupQueueTimer();
+
     }
 
     private void sendBLEData(String message) {
@@ -1370,7 +1196,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                         mState = UART_PROFILE_DISCONNECTED;
                         mService.close();
                         //setUiState();
-                        setupReconnectTimer();
+                        //setupReconnectTimer();
                         isBLEConnected = false;
                     }
                 });
@@ -1761,5 +1587,183 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         niceTTS.speak(speakWords, TextToSpeech.QUEUE_FLUSH, null);
     }
 
+
+
+
+    List<BluetoothDevice> deviceList;
+    private DeviceAdapter deviceAdapter;
+    Map<String, Integer> devRssiValues;
+    private static final long SCAN_PERIOD = 10000; //scanning for 10 seconds
+
+    private boolean mScanning;
+    private void populateList() {
+        /* Initialize device list container */
+        Log.d(TAG, "populateList");
+        deviceList = new ArrayList<BluetoothDevice>();
+        deviceAdapter = new DeviceAdapter(this, deviceList);
+        devRssiValues = new HashMap<String, Integer>();
+
+        ListView newDevicesListView = (ListView) findViewById(R.id.new_devices);
+        newDevicesListView.setAdapter(deviceAdapter);
+        newDevicesListView.setOnItemClickListener(mDeviceClickListener);
+
+        scanLeDevice(true);
+
+    }
+
+    private void scanLeDevice(final boolean enable) {
+        //final Button cancelButton = (Button) findViewById(R.id.btn_cancel);
+        if (enable) {
+            // Stops scanning after a pre-defined scan period.
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mScanning = false;
+                    mBtAdapter.stopLeScan(mLeScanCallback);
+
+                    //cancelButton.setText(R.string.scan);
+
+                }
+            }, SCAN_PERIOD);
+
+            mScanning = true;
+            mBtAdapter.startLeScan(mLeScanCallback);
+            //cancelButton.setText(R.string.cancel);
+        } else {
+            mScanning = false;
+            mBtAdapter.stopLeScan(mLeScanCallback);
+            //cancelButton.setText(R.string.scan);
+        }
+
+    }
+
+    private BluetoothAdapter.LeScanCallback mLeScanCallback =
+            new BluetoothAdapter.LeScanCallback() {
+
+                @Override
+                public void onLeScan(final BluetoothDevice device, final int rssi, byte[] scanRecord) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            addDevice(device,rssi);
+                        }
+                    });
+                }
+            };
+
+    private void addDevice(BluetoothDevice device, int rssi) {
+        boolean deviceFound = false;
+
+        for (BluetoothDevice listDev : deviceList) {
+            if (listDev.getAddress().equals(device.getAddress())) {
+                deviceFound = true;
+                break;
+            }
+        }
+
+
+        devRssiValues.put(device.getAddress(), rssi);
+        if(rssi > -60)
+            Log.d(TAG, device.getAddress() + "  " + rssi);
+        if (!deviceFound) {
+            deviceList.add(device);
+            //mEmptyList.setVisibility(View.GONE);
+
+            deviceAdapter.notifyDataSetChanged();
+        }
+    }
+
+
+    private AdapterView.OnItemClickListener mDeviceClickListener = new AdapterView.OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            BluetoothDevice device = deviceList.get(position);
+            //mBluetoothAdapter.stopLeScan(mLeScanCallback);
+
+            Bundle b = new Bundle();
+            b.putString(BluetoothDevice.EXTRA_DEVICE, deviceList.get(position).getAddress());
+            Log.d(TAG, deviceList.get(position).getAddress());
+
+//            Intent result = new Intent();
+//            result.putExtras(b);
+//            setResult(Activity.RESULT_OK, result);
+            connectBLE(deviceList.get(position).getAddress());
+//            finish();
+
+        }
+    };
+
+    class DeviceAdapter extends BaseAdapter {
+        Context context;
+        List<BluetoothDevice> devices;
+        LayoutInflater inflater;
+
+        public DeviceAdapter(Context context, List<BluetoothDevice> devices) {
+            this.context = context;
+            inflater = LayoutInflater.from(context);
+            this.devices = devices;
+        }
+
+        @Override
+        public int getCount() {
+            return devices.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return devices.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewGroup vg;
+
+            if (convertView != null) {
+                vg = (ViewGroup) convertView;
+            } else {
+                vg = (ViewGroup) inflater.inflate(R.layout.device_element, null);
+            }
+
+            BluetoothDevice device = devices.get(position);
+            final TextView tvadd = ((TextView) vg.findViewById(R.id.address));
+            final TextView tvname = ((TextView) vg.findViewById(R.id.name));
+            final TextView tvpaired = (TextView) vg.findViewById(R.id.paired);
+            final TextView tvrssi = (TextView) vg.findViewById(R.id.rssi);
+
+            tvrssi.setVisibility(View.VISIBLE);
+            byte rssival = (byte) devRssiValues.get(device.getAddress()).intValue();
+            if (rssival != 0) {
+                tvrssi.setText("RSSI: " + String.valueOf(rssival));
+            }
+
+            tvname.setText(device.getName());
+            tvadd.setText("MAC: " + device.getAddress());
+            if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
+                Log.i(TAG, "device::"+device.getName());
+                tvname.setTextColor(Color.WHITE);
+                tvadd.setTextColor(Color.WHITE);
+                tvpaired.setTextColor(Color.GRAY);
+                tvpaired.setVisibility(View.VISIBLE);
+                tvpaired.setText(R.string.paired);
+                tvrssi.setVisibility(View.VISIBLE);
+                tvrssi.setTextColor(Color.WHITE);
+
+            } else {
+                tvname.setTextColor(Color.WHITE);
+                tvadd.setTextColor(Color.WHITE);
+                tvpaired.setVisibility(View.GONE);
+                tvrssi.setVisibility(View.VISIBLE);
+                tvrssi.setTextColor(Color.WHITE);
+            }
+            return vg;
+        }
+    }
 }
 
