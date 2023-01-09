@@ -19,8 +19,13 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:23.0.0'
+    compile 'com.android.support:support-v4:27.1.0'
     compile 'com.android.support:percent:23.2.1'
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
+    // Gson
+    compile 'com.google.code.gson:gson:2.8.1'
+
+    //https://github.com/ChaosLeung/PinView
+    implementation 'com.chaos.view:pinview:1.4.2'
 }

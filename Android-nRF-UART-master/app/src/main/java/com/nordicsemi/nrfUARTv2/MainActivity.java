@@ -22,7 +22,7 @@
  */
 
 //https://gourmet-technology-crypto.jp/en/technology/android-things-on-raspberry-pi3-uart-and-bluetooth-coexistence/
-
+//https://materialdesignicons.com/
 package com.nordicsemi.nrfUARTv2;
 
 import java.io.File;
@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.github.ybq.android.spinkit.SpinKitView;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -48,6 +49,8 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.icu.text.LocaleDisplayNames;
+import android.support.v4.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 
@@ -74,6 +77,8 @@ import android.os.Message;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -87,8 +92,10 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -103,8 +110,11 @@ import static com.nordicsemi.nrfUARTv2.DeviceModel.SPEED_STOP;
 import static com.nordicsemi.nrfUARTv2.Helper.TOUCH_ACTION_DOWN_DELAY;
 import static com.nordicsemi.nrfUARTv2.Helper.TOUCH_ACTION_DOWN_DELAY_SEAT;
 import static com.nordicsemi.nrfUARTv2.Helper.TOUCH_ACTION_UP_DELAY;
+import static com.nordicsemi.nrfUARTv2.NPNConstants.BLE_FRAGMENT_INDEX;
+import static com.nordicsemi.nrfUARTv2.NPNConstants.REGISTER_FRAGMENT_INDEX;
+import static com.nordicsemi.nrfUARTv2.NPNConstants.WIFI_FRAGMENT_INDEX;
 
-public class MainActivity extends Activity implements TextToSpeech.OnInitListener, RadioGroup.OnCheckedChangeListener, View.OnTouchListener, View.OnClickListener, UpdateAPK.UpdateAPKListener, LocationListener {
+public class MainActivity extends FragmentActivity implements TextToSpeech.OnInitListener, RadioGroup.OnCheckedChangeListener, View.OnTouchListener, View.OnClickListener, UpdateAPK.UpdateAPKListener, LocationListener {
     private static final int REQUEST_SELECT_DEVICE = 1;
     private static final int REQUEST_ENABLE_BT = 2;
     private static final int UART_PROFILE_READY = 10;
@@ -119,128 +129,21 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     private UartService mService = null;
     private BluetoothDevice mDevice = null;
     private BluetoothAdapter mBtAdapter = null;
+    private SpinKitView loading_next = null;
 
     private ListView messageListView;
     private ArrayAdapter<String> listAdapter;
     private Button btnConnectDisconnect, btnSend;
     private EditText edtMessage;
 
-    LocationManager locationManager;
-    ////////Add source code/////////
-    DeviceModel[] deviceModels = new DeviceModel[]{
-            /** Board 1 - Motor */
-            new DeviceModel((byte) 0x01, (byte) 0xf0), /* 0. LEFT_TABLE           */
-            new DeviceModel((byte) 0x01, (byte) 0xf1), /* 1. RIGHT_TABLE          */
-            new DeviceModel((byte) 0x01, (byte) 0xf2), /* 2. CONTROL_PANEL        */
-
-            /** Board 2 - Motor */
-            new DeviceModel((byte) 0x02, (byte) 0xf0), /* 3. CURTAIN_REAR_LEFT    */
-            new DeviceModel((byte) 0x02, (byte) 0xf1), /* 4. CURTAIN_REAR_CENTER  */
-            new DeviceModel((byte) 0x02, (byte) 0xf2), /* 5. CURTAIN_REAR_RIGHT   */
-
-            /** Board 3 - Motor */
-            new DeviceModel((byte) 0x03, (byte) 0xf0), /* 6. CURTAIN_FRONT_LEFT   */
-            new DeviceModel((byte) 0x03, (byte) 0xf1), /* 7. CURTAIN_FRONT_RIGHT  */
-            new DeviceModel((byte) 0x03, (byte) 0xf2), /* 8. TV                   */
-
-            /** Board 4 - Relay */
-            new DeviceModel((byte) 0x04, (byte) 0xf0), /* 9.  LEFT_SEAT_A         */
-            new DeviceModel((byte) 0x04, (byte) 0xf1), /* 10. LEFT_SEAT_B         */
-            new DeviceModel((byte) 0x04, (byte) 0xf2), /* 11. LIGHT_4X            */
-
-            /** Board 5 - Relay */
-            new DeviceModel((byte) 0x05, (byte) 0xf0), /* 12. RIGHT_SEAT_A        */
-            new DeviceModel((byte) 0x05, (byte) 0xf1), /* 13. RIGHT_SEAT_B        */
-            new DeviceModel((byte) 0x05, (byte) 0xf2), /* 14. LIGHT_SIDE          */
-
-            /** Board 6 - Relay */
-            new DeviceModel((byte) 0x06, (byte) 0xf0), /* 15. LIGHT_CEILING       */
-            new DeviceModel((byte) 0x06, (byte) 0xf1), /* 16. LIGHT_DRAWERS       */
-            new DeviceModel((byte) 0x06, (byte) 0xf2), /* 17. LIGHT_WATER_DROP    */
-
-    };
-    private static final int INDEX_LEFT_SEAT_A = 9;
-    private static final int INDEX_LEFT_SEAT_B = 10;
-    private static final int INDEX_RIGHT_SEAT_A = 12;
-    private static final int INDEX_RIGHT_SEAT_B = 13;
-
-    private static final int INDEX_LIGHT_SIDE = 14;
-    private static final int INDEX_LIGHT_4X = 11;
-    private static final int INDEX_LIGHT_CEILING = 15;
-    private static final int INDEX_LIGHT_DRAWERS = 16;
-    private static final int INDEX_LIGHT_WATER_DROP = 17;
-
-    private static final int INDEX_CURTAIN_FRONT_LEFT = 6;
-    private static final int INDEX_CURTAIN_FRONT_RIGHT = 7;
-    private static final int INDEX_CURTAIN_REAR_LEFT = 3;
-    private static final int INDEX_CURTAIN_REAR_RIGHT = 5;
-    private static final int INDEX_CURTAIN_REAR_CENTER = 4;
-
-    private static final int INDEX_LEFT_TABLE = 0;
-    private static final int INDEX_CENTER_TABLE = 0;  // DCAR3
-    private static final int INDEX_RIGHT_TABLE = 1;
-
-    private static final int INDEX_TV = 8;
-
-    private static final int INDEX_CONTROL_PANEL = 2;
-
-    // Left Seat
-    ImageView imgLeftSeat;
-    ImageButton btnLeftSeatUp;
-    ImageButton btnLeftSeatDown;
-
-    ImageView imgRightSeat;
-    ImageButton btnRightSeatUp;
-    ImageButton btnRightSeatDown;
-
-    ImageView imgCurtainFrontLeft;
-    ImageButton btnCertainFrontLeftUp;
-    ImageButton btnCertainFrontLeftDown;
-
-    ImageView imgCurtainFrontRight;
-    ImageButton btnCertainFrontRightUp;
-    ImageButton btnCertainFrontRightDown;
-
-    ImageView imgCurtainRearLeft;
-    ImageButton btnCurtainRearLeftUp;
-    ImageButton btnCurtainRearLeftDown;
-
-    ImageView imgCurtainRearRight;
-    ImageButton btnCurtainRearRightUp;
-    ImageButton btnCurtainRearRightDown;
-
-    ImageView imgCurtainRearCenter;
-    ImageButton btnCurtainRearCenterUp;
-    ImageButton btnCurtainRearCenterDown;
-
-    ImageView imgLeftTable;
-    ImageView imgRightTable;
-    ImageView imgTV;
-
-    ImageView imgCenterTable;
-    ImageButton btnCenterTableUp;
-    ImageButton btnCenterTableDown;
-
-    ImageView imgLightCeiling;
-    ImageView imgLightTv;
-    ImageView imgLightSkyStars;
-    ImageView imgLightLed;
-    ImageView imgLightWaterDrop;
-
-    ImageButton imgLightSkyStarsMask;
-
-    String ipAddress = "";
 
     Button btnSetting;
     Button btnCode;
     ImageButton btnHomeSearchVoice;
     Context mContext;
-    ////////////////////////////////
-    ///////Methods and Function////
 
-    private static final int UI_DCAR1 = 100;
-    private static final int UI_DCAR3 = 300;
-    int currentUI = -1;
+
+
 
     @SuppressLint("ClickableViewAccessibility")
 
@@ -322,170 +225,8 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
 
     @Override
     public void onClick(View v) {
-        String cmd = "";
+        String cmd = "ABC";
         int vid = v.getId();
-
-        if (vid == imgLightCeiling.getId()) {
-
-            if (deviceModels[INDEX_LIGHT_SIDE].isOn()) {
-                imgLightCeiling.setActivated(false);
-
-                deviceModels[INDEX_LIGHT_SIDE].setOff();
-                deviceModels[INDEX_LIGHT_SIDE].configForSendData(SPEED_LOW, 500);
-                cmd = NPNConstants.CMD_LIGHT_SIDE_OFF;
-
-            } else {
-                imgLightCeiling.setActivated(true);
-
-                deviceModels[INDEX_LIGHT_SIDE].setOn();
-                deviceModels[INDEX_LIGHT_SIDE].configForSendData(SPEED_HIGH, 500);
-                cmd = NPNConstants.CMD_LIGHT_SIDE_ON;
-
-            }
-
-        }
-        else if (vid == imgLightTv.getId() && currentUI == UI_DCAR1 ) {
-
-            if (deviceModels[INDEX_LIGHT_4X].isOn()) {
-                imgLightTv.setActivated(false);
-
-                deviceModels[INDEX_LIGHT_4X].setOff();
-                deviceModels[INDEX_LIGHT_4X].configForSendData(SPEED_LOW, 500);
-                cmd = NPNConstants.CMD_LIGHT_TOP_OFF;
-
-            } else {
-                imgLightTv.setActivated(true);
-
-                deviceModels[INDEX_LIGHT_4X].setOn();
-                deviceModels[INDEX_LIGHT_4X].configForSendData(SPEED_HIGH, 500);
-                cmd = NPNConstants.CMD_LIGHT_TOP_ON;
-            }
-        }
-        else if ((vid == imgLightSkyStars.getId() || vid == imgLightSkyStarsMask.getId()) && currentUI == UI_DCAR1) {
-
-            if (deviceModels[INDEX_LIGHT_CEILING].isOn()) {
-                imgLightSkyStars.setActivated(false);
-
-
-                deviceModels[INDEX_LIGHT_CEILING].setOff();
-                deviceModels[INDEX_LIGHT_CEILING].configForSendData(SPEED_LOW, 500);
-                cmd = NPNConstants.CMD_LIGHT_CEILLING_OFF;
-            } else {
-                imgLightSkyStars.setActivated(true);
-
-                deviceModels[INDEX_LIGHT_CEILING].setOn();
-                deviceModels[INDEX_LIGHT_CEILING].configForSendData(SPEED_HIGH, 500);
-                cmd = NPNConstants.CMD_LIGHT_CEILLING_ON;
-            }
-
-        }
-        else if ((vid == imgLightSkyStars.getId() || vid == imgLightSkyStarsMask.getId()
-                || vid == imgLightTv.getId()) && currentUI == UI_DCAR3) {
-
-            if (deviceModels[INDEX_LIGHT_CEILING].isOn()) {
-                imgLightSkyStars.setActivated(false);
-                imgLightTv.setActivated(false);
-
-                deviceModels[INDEX_LIGHT_CEILING].setOff();
-                deviceModels[INDEX_LIGHT_CEILING].configForSendData(SPEED_LOW, 500);
-                cmd = NPNConstants.CMD_LIGHT_CEILLING_OFF;
-            } else {
-                imgLightSkyStars.setActivated(true);
-                imgLightTv.setActivated(true);
-
-                deviceModels[INDEX_LIGHT_CEILING].setOn();
-                deviceModels[INDEX_LIGHT_CEILING].configForSendData(SPEED_HIGH, 500);
-                cmd = NPNConstants.CMD_LIGHT_CEILLING_ON;
-            }
-
-        } else if (vid == imgLightLed.getId()) {
-
-            if (deviceModels[INDEX_LIGHT_DRAWERS].isOn()) {
-                imgLightLed.setActivated(false);
-
-                deviceModels[INDEX_LIGHT_DRAWERS].setOff();
-                deviceModels[INDEX_LIGHT_DRAWERS].configForSendData(SPEED_LOW, 500);
-                cmd = NPNConstants.CMD_LIGHT_DRAWERS_OFF;
-            } else {
-                imgLightLed.setActivated(true);
-
-                deviceModels[INDEX_LIGHT_DRAWERS].setOn();
-                deviceModels[INDEX_LIGHT_DRAWERS].configForSendData(SPEED_HIGH, 500);
-                cmd = NPNConstants.CMD_LIGHT_DRAWERS_ON;
-            }
-
-        } else if (vid == imgLightWaterDrop.getId()) {
-
-            if (deviceModels[INDEX_LIGHT_WATER_DROP].isOn()) {
-                imgLightWaterDrop.setActivated(false);
-
-                deviceModels[INDEX_LIGHT_WATER_DROP].setOff();
-                deviceModels[INDEX_LIGHT_WATER_DROP].configForSendData(SPEED_LOW, 500);
-                cmd = NPNConstants.CMD_LIGHT_WATER_DROP_OFF;
-
-
-            } else {
-                imgLightWaterDrop.setActivated(true);
-
-                deviceModels[INDEX_LIGHT_WATER_DROP].setOn();
-                deviceModels[INDEX_LIGHT_WATER_DROP].configForSendData(SPEED_HIGH, 500);
-                cmd = NPNConstants.CMD_LIGHT_WATER_DROP_ON;
-
-
-            }
-
-        } else if (vid == imgLeftTable.getId()) {
-
-            if (deviceModels[INDEX_LEFT_TABLE].isOn()) {
-                imgLeftTable.setActivated(false);
-
-                deviceModels[INDEX_LEFT_TABLE].setOff();
-                deviceModels[INDEX_LEFT_TABLE].configForSendData(SPEED_LOW, 500);
-                cmd = NPNConstants.CMD_TABLE_LEFT_OFF;
-            } else {
-                imgLeftTable.setActivated(true);
-
-                deviceModels[INDEX_LEFT_TABLE].setOn();
-                deviceModels[INDEX_LEFT_TABLE].configForSendData(SPEED_HIGH, 500);
-                cmd = NPNConstants.CMD_TABLE_LEFT_ON;
-            }
-            deviceModels[INDEX_LEFT_TABLE].setNeedStop(40000);
-
-        } else if (vid == imgRightTable.getId()) {
-            if (deviceModels[INDEX_RIGHT_TABLE].isOn()) {
-                imgRightTable.setActivated(false);
-
-                deviceModels[INDEX_RIGHT_TABLE].setOff();
-                deviceModels[INDEX_RIGHT_TABLE].configForSendData(SPEED_LOW, 500);
-                cmd = NPNConstants.CMD_TABLE_RIGHT_OFF;
-            } else {
-                imgRightTable.setActivated(true);
-
-                deviceModels[INDEX_RIGHT_TABLE].setOn();
-                deviceModels[INDEX_RIGHT_TABLE].configForSendData(SPEED_HIGH, 500);
-                cmd = NPNConstants.CMD_TABLE_RIGHT_ON;
-            }
-            deviceModels[INDEX_RIGHT_TABLE].setNeedStop(40000);
-
-        } else if (vid == imgTV.getId()) {
-
-            if (deviceModels[INDEX_TV].isOn()) {
-                imgTV.setActivated(false);
-
-                deviceModels[INDEX_TV].setOff();
-                deviceModels[INDEX_TV].configForSendData(SPEED_LOW, 500);
-                cmd = NPNConstants.CMD_TIVI_OFF;
-
-            } else {
-                imgTV.setActivated(true);
-
-                deviceModels[INDEX_TV].setOn();
-                deviceModels[INDEX_TV].configForSendData(SPEED_HIGH, 500);
-                cmd = NPNConstants.CMD_TIVI_ON;
-            }
-            deviceModels[INDEX_TV].setNeedStop(12000);
-
-        }
 
         Log.d(TAG, "CMD: " + cmd);
         if (cmd.length() > 0) {
@@ -501,321 +242,14 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         String cmd = "";
         int vid = v.getId();
 
-        if (vid == btnLeftSeatUp.getId()) {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                imgLeftSeat.setActivated(true);
-                deviceModels[INDEX_LEFT_SEAT_A].configForSendData(SPEED_HIGH, TOUCH_ACTION_DOWN_DELAY_SEAT);
-                cmd = NPNConstants.CMD_LEFT_SEAT_UP;
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                imgLeftSeat.setActivated(false);
-                deviceModels[INDEX_LEFT_SEAT_A].configForSendData(SPEED_LOW, TOUCH_ACTION_UP_DELAY);
-                cmd = NPNConstants.CMD_LEFT_SEAT_STOP;
-            }
 
-        } else if (vid == btnLeftSeatDown.getId()) {
-
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                imgLeftSeat.setActivated(true);
-                deviceModels[INDEX_LEFT_SEAT_B].configForSendData(SPEED_HIGH, TOUCH_ACTION_DOWN_DELAY_SEAT);
-                cmd = NPNConstants.CMD_LEFT_SEAT_DOWN;
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                imgLeftSeat.setActivated(false);
-                deviceModels[INDEX_LEFT_SEAT_B].configForSendData(SPEED_LOW, TOUCH_ACTION_UP_DELAY);
-                cmd = NPNConstants.CMD_LEFT_SEAT_STOP;
-            }
-
-        } else if (vid == btnRightSeatUp.getId()) {
-
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                imgRightSeat.setActivated(true);
-                deviceModels[INDEX_RIGHT_SEAT_A].configForSendData(SPEED_HIGH, TOUCH_ACTION_DOWN_DELAY_SEAT);
-                cmd = NPNConstants.CMD_RIGHT_SEAT_UP;
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                imgRightSeat.setActivated(false);
-                deviceModels[INDEX_RIGHT_SEAT_A].configForSendData(SPEED_LOW, TOUCH_ACTION_UP_DELAY);
-                cmd = NPNConstants.CMD_RIGHT_SEAT_STOP;
-            }
-
-        } else if (vid == btnRightSeatDown.getId()) {
-
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                imgRightSeat.setActivated(true);
-                deviceModels[INDEX_RIGHT_SEAT_B].configForSendData(SPEED_HIGH, TOUCH_ACTION_DOWN_DELAY_SEAT);
-                cmd = NPNConstants.CMD_RIGHT_SEAT_DOWN;
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                imgRightSeat.setActivated(false);
-                deviceModels[INDEX_RIGHT_SEAT_B].configForSendData(SPEED_LOW, TOUCH_ACTION_UP_DELAY);
-                cmd = NPNConstants.CMD_RIGHT_SEAT_STOP;
-            }
-
-        } else if (vid == btnCertainFrontLeftUp.getId()) {
-
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                imgCurtainFrontLeft.setActivated(true);
-                deviceModels[INDEX_CURTAIN_FRONT_LEFT].configForSendData(SPEED_HIGH, TOUCH_ACTION_DOWN_DELAY);
-                cmd = NPNConstants.CMD_CURTAIN_FRONT_LEFT_UP;
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                imgCurtainFrontLeft.setActivated(false);
-                deviceModels[INDEX_CURTAIN_FRONT_LEFT].configForSendData(SPEED_STOP, TOUCH_ACTION_UP_DELAY);
-                cmd = NPNConstants.CMD_CURTAIN_FRONT_LEFT_STOP;
-            }
-
-        } else if (vid == btnCertainFrontLeftDown.getId()) {
-
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                imgCurtainFrontLeft.setActivated(true);
-                deviceModels[INDEX_CURTAIN_FRONT_LEFT].configForSendData(SPEED_LOW, TOUCH_ACTION_DOWN_DELAY);
-                cmd = NPNConstants.CMD_CURTAIN_FRONT_LEFT_DOWN;
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                imgCurtainFrontLeft.setActivated(false);
-                deviceModels[INDEX_CURTAIN_FRONT_LEFT].configForSendData(SPEED_STOP, TOUCH_ACTION_UP_DELAY);
-                cmd = NPNConstants.CMD_CURTAIN_FRONT_LEFT_STOP;
-            }
-
-        } else if (vid == btnCertainFrontRightUp.getId()) {
-
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                imgCurtainFrontRight.setActivated(true);
-                deviceModels[INDEX_CURTAIN_FRONT_RIGHT].configForSendData(SPEED_HIGH, TOUCH_ACTION_DOWN_DELAY);
-                cmd = NPNConstants.CMD_CURTAIN_FRONT_RIGHT_UP;
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                imgCurtainFrontRight.setActivated(false);
-                deviceModels[INDEX_CURTAIN_FRONT_RIGHT].configForSendData(SPEED_STOP, TOUCH_ACTION_UP_DELAY);
-                cmd = NPNConstants.CMD_CURTAIN_FRONT_RIGHT_STOP;
-            }
-
-        } else if (vid == btnCertainFrontRightDown.getId()) {
-
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                imgCurtainFrontRight.setActivated(true);
-                deviceModels[INDEX_CURTAIN_FRONT_RIGHT].configForSendData(SPEED_LOW, TOUCH_ACTION_DOWN_DELAY);
-                cmd = NPNConstants.CMD_CURTAIN_FRONT_RIGHT_DOWN;
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                imgCurtainFrontRight.setActivated(false);
-                deviceModels[INDEX_CURTAIN_FRONT_RIGHT].configForSendData(SPEED_STOP, TOUCH_ACTION_UP_DELAY);
-                cmd = NPNConstants.CMD_CURTAIN_FRONT_RIGHT_STOP;
-            }
-
-        } else if (vid == btnCurtainRearLeftUp.getId()) {
-
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                imgCurtainRearLeft.setActivated(true);
-                deviceModels[INDEX_CURTAIN_REAR_LEFT].configForSendData(SPEED_HIGH, TOUCH_ACTION_DOWN_DELAY);
-                cmd = NPNConstants.CMD_CURTAIN_REAR_LEFT_UP;
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                imgCurtainRearLeft.setActivated(false);
-                deviceModels[INDEX_CURTAIN_REAR_LEFT].configForSendData(SPEED_STOP, TOUCH_ACTION_UP_DELAY);
-                cmd = NPNConstants.CMD_CURTAIN_REAR_LEFT_STOP;
-            }
-
-        } else if (vid == btnCurtainRearLeftDown.getId()) {
-
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                imgCurtainRearLeft.setActivated(true);
-                deviceModels[INDEX_CURTAIN_REAR_LEFT].configForSendData(SPEED_LOW, TOUCH_ACTION_DOWN_DELAY);
-                cmd = NPNConstants.CMD_CURTAIN_REAR_LEFT_DOWN;
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                imgCurtainRearLeft.setActivated(false);
-                deviceModels[INDEX_CURTAIN_REAR_LEFT].configForSendData(SPEED_STOP, TOUCH_ACTION_UP_DELAY);
-                cmd = NPNConstants.CMD_CURTAIN_REAR_LEFT_STOP;
-            }
-
-        } else if (vid == btnCurtainRearRightUp.getId()) {
-
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                imgCurtainRearRight.setActivated(true);
-                deviceModels[INDEX_CURTAIN_REAR_RIGHT].configForSendData(SPEED_HIGH, TOUCH_ACTION_DOWN_DELAY);
-                cmd = NPNConstants.CMD_CURTAIN_REAR_RIGHT_UP;
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                imgCurtainRearRight.setActivated(false);
-                deviceModels[INDEX_CURTAIN_REAR_RIGHT].configForSendData(SPEED_STOP, TOUCH_ACTION_UP_DELAY);
-                cmd = NPNConstants.CMD_CURTAIN_REAR_RIGHT_STOP;
-            }
-
-        } else if (vid == btnCurtainRearRightDown.getId()) {
-
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                imgCurtainRearRight.setActivated(true);
-                deviceModels[INDEX_CURTAIN_REAR_RIGHT].configForSendData(SPEED_LOW, TOUCH_ACTION_DOWN_DELAY);
-                cmd = NPNConstants.CMD_CURTAIN_REAR_RIGHT_DOWN;
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                imgCurtainRearRight.setActivated(false);
-                deviceModels[INDEX_CURTAIN_REAR_RIGHT].configForSendData(SPEED_STOP, TOUCH_ACTION_UP_DELAY);
-                cmd = NPNConstants.CMD_CURTAIN_REAR_RIGHT_STOP;
-            }
-
-        } else if (vid == btnCurtainRearCenterUp.getId()) {
-
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                imgCurtainRearCenter.setActivated(true);
-                deviceModels[INDEX_CURTAIN_REAR_CENTER].configForSendData(SPEED_HIGH, TOUCH_ACTION_DOWN_DELAY);
-                cmd = NPNConstants.CMD_CURTAIN_REAR_CENTER_UP;
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                imgCurtainRearCenter.setActivated(false);
-                deviceModels[INDEX_CURTAIN_REAR_CENTER].configForSendData(SPEED_STOP, TOUCH_ACTION_UP_DELAY);
-                cmd = NPNConstants.CMD_CURTAIN_REAR_CENTER_STOP;
-            }
-
-        } else if (vid == btnCurtainRearCenterDown.getId()) {
-
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                imgCurtainRearCenter.setActivated(true);
-                deviceModels[INDEX_CURTAIN_REAR_CENTER].configForSendData(SPEED_LOW, TOUCH_ACTION_DOWN_DELAY);
-                cmd = NPNConstants.CMD_CURTAIN_REAR_CENTER_DOWN;
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                imgCurtainRearCenter.setActivated(false);
-                deviceModels[INDEX_CURTAIN_REAR_CENTER].configForSendData(SPEED_STOP, TOUCH_ACTION_UP_DELAY);
-                cmd = NPNConstants.CMD_CURTAIN_REAR_CENTER_STOP;
-            }
-
-        } else if (vid == btnCenterTableUp.getId()) {
-
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                imgCenterTable.setActivated(true);
-                deviceModels[INDEX_CENTER_TABLE].configForSendData(SPEED_HIGH, TOUCH_ACTION_DOWN_DELAY);
-                cmd = NPNConstants.CMD_TABLE_CENTER_UP;
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                imgCenterTable.setActivated(false);
-                deviceModels[INDEX_CENTER_TABLE].configForSendData(SPEED_STOP, TOUCH_ACTION_UP_DELAY);
-                cmd = NPNConstants.CMD_TABLE_CENTER_STOP;
-            }
-
-        } else if (vid == btnCenterTableDown.getId()) {
-
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                imgCenterTable.setActivated(true);
-                deviceModels[INDEX_CENTER_TABLE].configForSendData(SPEED_LOW, TOUCH_ACTION_DOWN_DELAY);
-                cmd = NPNConstants.CMD_TABLE_CENTER_DOWN;
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                imgCenterTable.setActivated(false);
-                deviceModels[INDEX_CENTER_TABLE].configForSendData(SPEED_STOP, TOUCH_ACTION_UP_DELAY);
-                cmd = NPNConstants.CMD_TABLE_CENTER_STOP;
-            }
-
-        }
-
-        Log.d(TAG, "CMD is:" + cmd);
-        if (cmd.length() > 0) {
-            cmdQueue.add(cmd);
-            //sendBLEData("#" + cmd + "!");
-        }
         return false;
     }
-    private List<String> cmdQueue = new ArrayList<>();
-    Timer queueTimer;
-    TimerTask queueTask;
-    private void setupQueueTimer(){
-        queueTimer = new Timer();
-        queueTask = new TimerTask() {
-            @Override
-            public void run() {
-                if(cmdQueue.size() > 2){
-                    for(int i = 0; i < cmdQueue.size() - 2; i++){
-                        cmdQueue.remove(0);
-                    }
-                }
-                if(cmdQueue.size() > 0){
-                    String cmd = cmdQueue.get(0);
-                    sendBLEData("#" + cmd + "!");
-                    cmdQueue.remove(0);
-                }
-            }
-        };
-        queueTimer.schedule(queueTask,100,200);
-    }
-
-
-    void initDeviceFirstState() {
-
-        deviceModels[INDEX_LIGHT_4X].setOn();
-        //deviceModels[INDEX_LIGHT_4X].configForSendData(SPEED_HIGH, 50);
-        imgLightTv.setActivated(true);
-
-        deviceModels[INDEX_LIGHT_CEILING].setOn();
-        //deviceModels[INDEX_LIGHT_CEILING].configForSendData(SPEED_HIGH, 50);
-        imgLightSkyStars.setActivated(true);
-
-        deviceModels[INDEX_LIGHT_DRAWERS].setOn();
-        //deviceModels[INDEX_LIGHT_DRAWERS].configForSendData(SPEED_HIGH, 50);
-        imgLightLed.setActivated(true);
-
-        deviceModels[INDEX_LIGHT_SIDE].setOn();
-        //deviceModels[INDEX_LIGHT_SIDE].configForSendData(SPEED_HIGH, 50);
-        imgLightCeiling.setActivated(true);
-
-        imgLightWaterDrop.setActivated(true);
 
 
 
 
-        /* Always turn on all lights */
-//        deviceModels[INDEX_LIGHT_4X].setOn();
-//        deviceModels[INDEX_LIGHT_4X].configForSendData(SPEED_HIGH, 1000);
-//        imgLightTv.setActivated(true);
-//
-//        deviceModels[INDEX_LIGHT_CEILING].setOn();
-//        deviceModels[INDEX_LIGHT_CEILING].configForSendData(SPEED_HIGH, 1000);
-//        imgLightSkyStars.setActivated(true);
-//
-//        deviceModels[INDEX_LIGHT_DRAWERS].setOn();
-//        deviceModels[INDEX_LIGHT_DRAWERS].configForSendData(SPEED_HIGH, 1000);
-//        imgLightLed.setActivated(true);
-//
-//        deviceModels[INDEX_LIGHT_SIDE].setOn();
-//        deviceModels[INDEX_LIGHT_SIDE].configForSendData(SPEED_HIGH, 1000);
-//        imgLightCeiling.setActivated(true);
 
-        /* Always close all curtains */
-        deviceModels[INDEX_CURTAIN_FRONT_LEFT].configForSendData(SPEED_LOW, 1000);
-        deviceModels[INDEX_CURTAIN_FRONT_LEFT].setNeedStop(15000);
-
-        deviceModels[INDEX_CURTAIN_FRONT_RIGHT].configForSendData(SPEED_LOW, 1000);
-        deviceModels[INDEX_CURTAIN_FRONT_RIGHT].setNeedStop(15000);
-
-        deviceModels[INDEX_CURTAIN_REAR_LEFT].configForSendData(SPEED_LOW, 1000);
-        deviceModels[INDEX_CURTAIN_REAR_LEFT].setNeedStop(15000);
-
-        deviceModels[INDEX_CURTAIN_REAR_RIGHT].configForSendData(SPEED_LOW, 1000);
-        deviceModels[INDEX_CURTAIN_REAR_RIGHT].setNeedStop(15000);
-
-        deviceModels[INDEX_CURTAIN_REAR_CENTER].configForSendData(SPEED_LOW, 1000);
-        deviceModels[INDEX_CURTAIN_REAR_CENTER].setNeedStop(15000);
-
-        /* Remember last state of TV */
-        deviceModels[INDEX_TV].setOff();
-        deviceModels[INDEX_TV].configForSendData(SPEED_LOW, 1000);
-        deviceModels[INDEX_TV].setNeedStop(12000);
-        imgTV.setActivated(false);
-
-        deviceModels[INDEX_LEFT_TABLE].setOff();
-        deviceModels[INDEX_LEFT_TABLE].configForSendData(SPEED_LOW, 1000);
-        deviceModels[INDEX_LEFT_TABLE].setNeedStop(40000);
-        imgLeftTable.setActivated(false);
-
-        deviceModels[INDEX_RIGHT_TABLE].setOff();
-        deviceModels[INDEX_RIGHT_TABLE].configForSendData(SPEED_LOW, 1000);
-        deviceModels[INDEX_RIGHT_TABLE].setNeedStop(40000);
-        imgRightTable.setActivated(false);
-    }
-
-
-    private void startVoiceInput() {
-
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        //intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,"vi-VN");
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Nói \"MỞ ĐÈN\" hoặc \"MỞ CỬA SỔ\"");
-
-
-        try {
-            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
-        } catch (ActivityNotFoundException a) {
-
-        }
-
-
-    }
 
     private static final int REQ_CODE_SPEECH_INPUT = 100;
 
@@ -853,67 +287,6 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                 if (resultCode == RESULT_OK && null != data) {
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     if (result.size() > 0) {
-                        String ubc_voice = result.get(0).toLowerCase();
-                        final String data_voice = ubc_voice;
-                        String messageSocket = "";
-                        Log.d("DCAR_TEST", "Message: " + ubc_voice);
-                        if (ubc_voice.indexOf("1") >= 0 && ubc_voice.indexOf("4") >= 0 && ubc_voice.indexOf("7") >= 0) {
-
-                            String mode = Helper.loadTVCode((MainActivity) mContext, NPNConstants.SETTING_UI);
-                            if (mode.equals("100") == true) mode = "300";
-                            else mode = "100";
-                            Helper.saveTVCode((MainActivity) mContext, NPNConstants.SETTING_UI, mode);
-                            if (Helper.loadTVCode((MainActivity) mContext, NPNConstants.SETTING_UI).equals("300") == true) {
-                                //initUI(UI_DCAR3);
-                            } else {
-                                //initUI(UI_DCAR1);
-                            }
-
-                        } else if ((ubc_voice.indexOf("mở") >= 0 && ubc_voice.indexOf("rèm") >= 0)
-                                || (ubc_voice.indexOf("mở") >= 0 && ubc_voice.indexOf("game") >= 0)
-                                || (ubc_voice.indexOf("mở") >= 0 && ubc_voice.indexOf("cửa") >= 0)) {
-                            messageSocket = "DCAR_CURTAIN_UP";
-                        } else if ((ubc_voice.indexOf("đóng") >= 0 && ubc_voice.indexOf("rèm") >= 0)
-                                || (ubc_voice.indexOf("đón") >= 0 && ubc_voice.indexOf("rằm") >= 0)
-                                || (ubc_voice.indexOf("đóng") >= 0 && ubc_voice.indexOf("cửa") >= 0)) {
-                            messageSocket = "DCAR_CURTAIN_DOWN";
-                        } else if (ubc_voice.indexOf("tắt") >= 0 && ubc_voice.indexOf("đèn") >= 0) {
-                            messageSocket = "DCAR_LED_OFF";
-                            updateUIVoiceCommand(messageSocket);
-                        } else if (ubc_voice.indexOf("mở") >= 0 && ubc_voice.indexOf("đèn") >= 0 ||
-                                ubc_voice.indexOf("bật") >= 0 && ubc_voice.indexOf("đèn") >= 0) {
-                            messageSocket = "DCAR_LED_ON";
-                            updateUIVoiceCommand(messageSocket);
-                        } else if (ubc_voice.indexOf("truyền hình") >= 0 || ubc_voice.indexOf("tivi") >= 0 || ubc_voice.indexOf("ti vi") >= 0) {
-                            if (ubc_voice.indexOf("mở") >= 0 || ubc_voice.indexOf("bật") >= 0) {
-                                //((MainActivity)(getActivity())).sendKeyCommand("DCAR_TIVI_ON");
-                                messageSocket = "TIVI_ON";
-                            } else if (ubc_voice.indexOf("tắt") >= 0 || ubc_voice.indexOf("đóng") >= 0) {
-                                //((MainActivity)(getActivity())).sendKeyCommand("DCAR_TIVI_OFF");
-                                messageSocket = "TIVI_OFF";
-                            }
-                        }
-
-                        if (messageSocket.length() > 0) {
-                            Log.d(TAG, "Mess from tablet: " + messageSocket);
-                            sendBLEData("#" + messageSocket + "!");
-                            if (messageSocket.equals("DCAR_CURTAIN_UP")) {
-                                talkToMe("Cửa sổ đang mở");
-                            } else if (messageSocket.equals("DCAR_CURTAIN_DOWN")) {
-                                talkToMe("Cửa sổ đang đóng");
-                            } else if (messageSocket.equals("DCAR_LED_ON")) {
-                                talkToMe("Đèn đang bật");
-                            } else if (messageSocket.equals("DCAR_LED_OFF")) {
-                                talkToMe("Đèn đang tắt");
-                            } else if (messageSocket.equals("TIVI_ON")) {
-                                talkToMe("Đang khởi động tivi");
-                            } else if (messageSocket.equals("TIVI_OFF")) {
-                                talkToMe("Đang đóng tivi");
-                            }
-                        } else {
-                            //Log.d(TAG, "Error code 1");
-                            talkToMe("Tôi không hiểu lệnh này, xin vui lòng thử lại!");
-                        }
 
                     }
                 } else {
@@ -934,62 +307,69 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                 }
                 break;
 
-
             default:
                 Log.e(TAG, "wrong request code");
                 break;
         }
     }
+    LinearLayout main_content;
+    FrameLayout fragment_content;
+    Fragment fragment;
+    TextView txtTitleCaption;
+    ImageView imgTitileIcon;
 
-    public void updateUIVoiceCommand(String cmd) {
-        final String mess = cmd;
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                switch (mess) {
-                    case "DCAR_LED_ON":
-                        deviceModels[INDEX_LIGHT_4X].setOn();
-                        //deviceModels[INDEX_LIGHT_4X].configForSendData(SPEED_HIGH, 50);
-                        imgLightTv.setActivated(true);
+    public void selectFragment(int position){
 
-                        deviceModels[INDEX_LIGHT_CEILING].setOn();
-                        //deviceModels[INDEX_LIGHT_CEILING].configForSendData(SPEED_HIGH, 50);
-                        imgLightSkyStars.setActivated(true);
+        Class fragmentClass = null;
+        String fragmentTag = "";
+        currentFragmentClass = position;
+        switch (position){
+            case BLE_FRAGMENT_INDEX:
 
-                        deviceModels[INDEX_LIGHT_DRAWERS].setOn();
-                        //deviceModels[INDEX_LIGHT_DRAWERS].configForSendData(SPEED_HIGH, 50);
-                        imgLightLed.setActivated(true);
+                main_content.setVisibility(View.VISIBLE);
+                fragment_content.setVisibility(View.GONE);
+                txtTitleCaption.setText("KẾT NỐI BLE");
+                imgTitileIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.bluetooth_icon));
 
-                        deviceModels[INDEX_LIGHT_SIDE].setOn();
-                        //deviceModels[INDEX_LIGHT_SIDE].configForSendData(SPEED_HIGH, 50);
-                        imgLightCeiling.setActivated(true);
+                break;
+            case WIFI_FRAGMENT_INDEX:
+                main_content.setVisibility(View.GONE);
+                fragment_content.setVisibility(View.VISIBLE);
+                fragmentClass = FragmentWifiSetting.class;
+                fragmentTag = "WifiSeting";
+                txtTitleCaption.setText("CÀI ĐẶT WIFI");
+                imgTitileIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.wifi_icon));
 
-                        imgLightWaterDrop.setActivated(true);
-                        break;
+                break;
+            case REGISTER_FRAGMENT_INDEX:
+                main_content.setVisibility(View.GONE);
+                fragment_content.setVisibility(View.VISIBLE);
+                fragmentClass = FragmentRegisterSetting.class;
+                fragmentTag = "RegisterSeting";
+                txtTitleCaption.setText("CÀI ĐẶT THANH GHI");
+                imgTitileIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.register_icon));
 
-                    case "DCAR_LED_OFF":
-                        deviceModels[INDEX_LIGHT_4X].setOff();
-                        //deviceModels[INDEX_LIGHT_4X].configForSendData(SPEED_LOW, 50);
-                        imgLightTv.setActivated(false);
+                break;
 
-                        deviceModels[INDEX_LIGHT_CEILING].setOff();
-                        //deviceModels[INDEX_LIGHT_CEILING].configForSendData(SPEED_LOW, 50);
-                        imgLightSkyStars.setActivated(false);
+        }
 
-                        deviceModels[INDEX_LIGHT_DRAWERS].setOff();
-                        //deviceModels[INDEX_LIGHT_DRAWERS].configForSendData(SPEED_LOW, 50);
-                        imgLightLed.setActivated(false);
+        if(position != BLE_FRAGMENT_INDEX){
+            try {
+                fragment = (Fragment)fragmentClass.newInstance();
 
-                        deviceModels[INDEX_LIGHT_SIDE].setOff();
-                        //deviceModels[INDEX_LIGHT_SIDE].configForSendData(SPEED_LOW, 50);
-                        imgLightCeiling.setActivated(false);
-                        imgLightWaterDrop.setActivated(false);
-                        break;
-                }
+                Bundle bundle = new Bundle();
+                bundle.putString("fragmentTag", fragmentTag);
+
+                fragment.setArguments(bundle);
+                // Insert the fragment by replacing any existing fragment
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.fragment_content, fragment).commitAllowingStateLoss();
+            } catch (Exception e) {
+                Log.e(TAG, "selectFragment " + e.getMessage());
             }
-        });
-    }
+        }
 
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -1013,6 +393,8 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         edtMessage = (EditText) findViewById(R.id.sendText);
         service_init();
 
+
+        loading_next = findViewById(R.id.loading_next);
 
         // Handle Disconnect & Connect button
         btnConnectDisconnect.setOnClickListener(new View.OnClickListener() {
@@ -1063,6 +445,13 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
             }
         });
 
+        final Button btnTest = findViewById(R.id.btnTest);
+        btnTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectFragment(REGISTER_FRAGMENT_INDEX);
+            }
+        });
 
 
 
@@ -1072,11 +461,15 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         checkLocationPermission();
 
         populateList();
+        main_content = findViewById(R.id.main_content);
+        fragment_content = findViewById(R.id.fragment_content);
 
-
+        txtTitleCaption = findViewById(R.id.txtTitleCaption);
+        imgTitileIcon = findViewById(R.id.imgTitleIcon);
     }
 
     private void sendBLEData(String message) {
+        Log.d("nRFUART", "Sending: " + message);
         if (isBLEConnected == false) {
             showMessage("Thiết bị chưa kết nối");
             return;
@@ -1106,7 +499,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
             //connectBLE("C7:43:12:D8:E6:9E");
             if (strBLEMac.indexOf("00000") < 0) {
                 Log.d(TAG, "Connecting to " + strBLEMac);
-                connectBLE(strBLEMac);
+                //connectBLE(strBLEMac);
             }
 
         }
@@ -1136,7 +529,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                 //connectBLE("C7:43:12:D8:E6:9E");
                 if (strBLEMac.indexOf("00000") < 0) {
                     Log.d(TAG, "Connecting to " + strBLEMac);
-                    connectBLE(strBLEMac);
+                    //connectBLE(strBLEMac);
                 }
             }
         };
@@ -1154,7 +547,16 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         return new String(hexChars);
     }
 
+    public void sendMessage(String mess){
+//        if(type == 2){
+//            String mess = "{\"type\":2}";
+//            sendBLEData(mess);
+//        }
+        sendBLEData(mess);
+    }
+
     private boolean isBLEConnected = false;
+    private int currentFragmentClass = 0;
     private final BroadcastReceiver UARTStatusChangeReceiver = new BroadcastReceiver() {
 
         public void onReceive(Context context, Intent intent) {
@@ -1177,7 +579,11 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                         if (reconnectTimer != null)
                             reconnectTimer.cancel();
                         showMessage("Kết nối thành công!");
+                        //sendBLEData("{\"type\":0}");
                         isBLEConnected = true;
+                        loading_next.setVisibility(View.INVISIBLE);
+                        newDevicesListView.setEnabled(true);
+                        selectFragment(WIFI_FRAGMENT_INDEX);
                     }
                 });
             }
@@ -1198,6 +604,9 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                         //setUiState();
                         //setupReconnectTimer();
                         isBLEConnected = false;
+                        loading_next.setVisibility(View.INVISIBLE);
+                        newDevicesListView.setEnabled(true);
+                        //selectFragment(WIFI_FRAGMENT_INDEX);
                     }
                 });
             }
@@ -1216,7 +625,20 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                         try {
                             //String text = new String(txValue, "UTF-8");
                             //Log.d("DCAR", "Received: " + text);
-                            Log.d("DCAR", "Received: " + bytesToHex(txValue));
+                            //Log.d("DCAR", "Received: " + bytesToHex(txValue));
+
+                            String text = new String(txValue, "UTF-8");
+                            //Log.d(TAG, "Received: " + text);
+                            //Log.d(TAG, "Received: " + txValue.length);
+
+                            if (currentFragmentClass ==  BLE_FRAGMENT_INDEX) {
+
+                            }else if(currentFragmentClass == WIFI_FRAGMENT_INDEX){
+                                ((FragmentWifiSetting) fragment).receiveBLEData(text);
+                            }else{
+
+                            }
+
 
                             //String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                             //listAdapter.add("[" + currentDateTimeString + "] RX: " + text);
@@ -1596,6 +1018,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     private static final long SCAN_PERIOD = 10000; //scanning for 10 seconds
 
     private boolean mScanning;
+    ListView newDevicesListView = null;
     private void populateList() {
         /* Initialize device list container */
         Log.d(TAG, "populateList");
@@ -1603,7 +1026,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         deviceAdapter = new DeviceAdapter(this, deviceList);
         devRssiValues = new HashMap<String, Integer>();
 
-        ListView newDevicesListView = (ListView) findViewById(R.id.new_devices);
+        newDevicesListView = (ListView) findViewById(R.id.new_devices);
         newDevicesListView.setAdapter(deviceAdapter);
         newDevicesListView.setOnItemClickListener(mDeviceClickListener);
 
@@ -1690,6 +1113,8 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
 //            result.putExtras(b);
 //            setResult(Activity.RESULT_OK, result);
             connectBLE(deviceList.get(position).getAddress());
+            loading_next.setVisibility(View.VISIBLE);
+            newDevicesListView.setEnabled(false);
 //            finish();
 
         }

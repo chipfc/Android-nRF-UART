@@ -93,4 +93,8 @@ public class NPNConstants {
     public static String SETTING_UI = "setting_ui";
 
 
+    public static final int BLE_FRAGMENT_INDEX = 14;
+    public static final int WIFI_FRAGMENT_INDEX = 15;
+    public static final int REGISTER_FRAGMENT_INDEX = 16;
+
 }
