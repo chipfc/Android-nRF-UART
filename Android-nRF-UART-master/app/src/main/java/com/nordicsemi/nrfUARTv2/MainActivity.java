@@ -581,7 +581,7 @@ public class MainActivity extends FragmentActivity implements TextToSpeech.OnIni
                         showMessage("Kết nối thành công!");
                         //sendBLEData("{\"type\":0}");
                         isBLEConnected = true;
-                        loading_next.setVisibility(View.INVISIBLE);
+                        loading_next.setVisibility(View.GONE);
                         newDevicesListView.setEnabled(true);
                         selectFragment(WIFI_FRAGMENT_INDEX);
                     }

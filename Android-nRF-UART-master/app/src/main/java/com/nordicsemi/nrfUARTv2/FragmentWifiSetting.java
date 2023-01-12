@@ -20,6 +20,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.nordicsemi.nrfUARTv2.NPNConstants.BLE_FRAGMENT_INDEX;
 import static com.nordicsemi.nrfUARTv2.NPNConstants.REGISTER_FRAGMENT_INDEX;
 import static org.xmlpull.v1.XmlPullParser.TEXT;
 
@@ -43,6 +45,7 @@ public class FragmentWifiSetting extends Fragment implements View.OnClickListene
     Button btnTest;
     int timer_counter = 0;
     int timer_flag = 0;
+    ImageButton btnBack, btnNext, btnRefresh;
 
     private void setTimer(int duration){
         timer_flag = 0;
@@ -92,6 +95,15 @@ public class FragmentWifiSetting extends Fragment implements View.OnClickListene
         btnTest.setOnClickListener(this);
         populateListWifi();
 
+        btnBack = view.findViewById(R.id.btnBackWifi);
+        btnNext = view.findViewById(R.id.btnNextWifi);
+        btnRefresh = view.findViewById(R.id.btnRefreshWifi);
+
+        btnBack.setOnClickListener(this);
+        btnNext.setOnClickListener(this);
+        btnRefresh.setOnClickListener(this);
+
+
         final Timer initTimer = new Timer();
         TimerTask aTask = new TimerTask() {
             @Override
@@ -112,7 +124,7 @@ public class FragmentWifiSetting extends Fragment implements View.OnClickListene
                 initTimer.cancel();
             }
         };
-        initTimer.schedule(aTask, 5000, 300000);
+        initTimer.schedule(aTask, 2000, 300000);
 
 
         Timer DFATimer = new Timer();
@@ -191,6 +203,16 @@ public class FragmentWifiSetting extends Fragment implements View.OnClickListene
             deviceListWifi.clear();
             deviceAdapter.notifyDataSetChanged();
             //showPasswordDialog("123");
+        }else if(view.getId() == R.id.btnBackWifi){
+            ((MainActivity)(getActivity())).selectFragment(BLE_FRAGMENT_INDEX);
+        }else if(view.getId() == R.id.btnNextWifi){
+            ((MainActivity)(getActivity())).selectFragment(REGISTER_FRAGMENT_INDEX);
+        }else if(view.getId() == R.id.btnRefreshWifi){
+            validJsonData = "";
+            sendBLEData("{\"type\":0}");
+            status_recv = 0;
+            deviceListWifi.clear();
+            deviceAdapter.notifyDataSetChanged();
         }
     }
     private int status_recv = 0;
@@ -297,31 +319,6 @@ public class FragmentWifiSetting extends Fragment implements View.OnClickListene
             wifi_name.setTextColor(Color.WHITE);
             wifi_rssi.setTextColor(Color.WHITE);
 
-//            tvrssi.setVisibility(View.VISIBLE);
-//            byte rssival = (byte) devRssiValues.get(device.getAddress()).intValue();
-//            if (rssival != 0) {
-//                tvrssi.setText("RSSI: " + String.valueOf(rssival));
-//            }
-//
-//            tvname.setText(device.getName());
-//            tvadd.setText("MAC: " + device.getAddress());
-//            if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
-//                Log.i(TAG, "device::"+device.getName());
-//                tvname.setTextColor(Color.WHITE);
-//                tvadd.setTextColor(Color.WHITE);
-//                tvpaired.setTextColor(Color.GRAY);
-//                tvpaired.setVisibility(View.VISIBLE);
-//                tvpaired.setText(R.string.paired);
-//                tvrssi.setVisibility(View.VISIBLE);
-//                tvrssi.setTextColor(Color.WHITE);
-//
-//            } else {
-//                tvname.setTextColor(Color.WHITE);
-//                tvadd.setTextColor(Color.WHITE);
-//                tvpaired.setVisibility(View.GONE);
-//                tvrssi.setVisibility(View.VISIBLE);
-//                tvrssi.setTextColor(Color.WHITE);
-//            }
             return vg;
         }
     }

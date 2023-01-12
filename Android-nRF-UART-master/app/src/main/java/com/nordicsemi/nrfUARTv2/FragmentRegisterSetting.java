@@ -1,6 +1,7 @@
 package com.nordicsemi.nrfUARTv2;
 
 import android.content.Context;
+import android.hardware.input.InputManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,6 +25,8 @@ import com.nordicsemi.nrfUARTv2.Models.RegisterDevice;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.nordicsemi.nrfUARTv2.NPNConstants.WIFI_FRAGMENT_INDEX;
+
 /**
  * Created by KAI on 12/17/2022.
  */
@@ -42,6 +45,13 @@ public class FragmentRegisterSetting extends Fragment {
         ImageButton btnAdd = view.findViewById(R.id.btnAddReg);
         ImageButton btnRemove = view.findViewById(R.id.btnRemoveReg);
         ImageButton btnConfirm = view.findViewById(R.id.btnConfirmRegs);
+        ImageButton btnBack = view.findViewById(R.id.btnBackFreg);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).selectFragment(WIFI_FRAGMENT_INDEX);
+            }
+        });
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -90,10 +100,14 @@ public class FragmentRegisterSetting extends Fragment {
         newDevicesListRegisterView.setAdapter(deviceAdapter);
 
         //newDevicesListRegisterView.setOnItemClickListener(mWifiClickListener);
+        RegisterDevice firstDevice = new RegisterDevice();
+        firstDevice.setData(new int[]{3, 3, 0, 0, 0, 1, 133, 232});
+        deviceListRegister.add(firstDevice);
 
+        RegisterDevice secondDevice = new RegisterDevice();
+        secondDevice.setData(new int[]{3, 3, 0, 1, 0, 1, 212, 40});
         deviceListRegister.add(new RegisterDevice());
-        deviceListRegister.add(new RegisterDevice());
-        deviceListRegister.add(new RegisterDevice());
+        //deviceListRegister.add(new RegisterDevice());
 
         deviceAdapter.notifyDataSetChanged();
 
