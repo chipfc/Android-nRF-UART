@@ -24,7 +24,10 @@ import com.nordicsemi.nrfUARTv2.Models.RegisterDevice;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import static com.nordicsemi.nrfUARTv2.NPNConstants.REGISTER_FRAGMENT_INDEX;
 import static com.nordicsemi.nrfUARTv2.NPNConstants.WIFI_FRAGMENT_INDEX;
 
 /**
@@ -75,17 +78,109 @@ public class FragmentRegisterSetting extends Fragment {
             public void onClick(View view) {
 
                 for(int i = 0; i < deviceListRegister.size(); i++){
-                    deviceListRegister.get(i).setId(i);
+                    deviceListRegister.get(i).setId(i + 10);
+
+                    Gson gson = new Gson();
+                    //String json = gson.toJson(deviceListRegister);
+                    String json = gson.toJson(deviceListRegister.get(i));
+                    Log.d("nRFUART", json);
+
+                    String json2 = "{" +
+                            "\"type\": 3," +
+                            "\"data\":" + "ABABAB" +
+                            "}";
+                    json2 = json2.replaceAll("ABABAB", json);
+                    int length = json2.length();
+                    int n = 20;
+
+                    for (int j = 0; j < length; j += n) {
+                        results.add(json2.substring(j, Math.min(length, j + n)));
+                    }
+                    Log.d("nRFUART", json2);
                 }
 
-                Gson gson = new Gson();
-                String json = gson.toJson(deviceListRegister);
-                Log.d("nRFUART", json);
+
             }
         });
 
+
+
+        Timer DFATimer = new Timer();
+        final TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                DFARun();
+                timerRun();
+            }
+        };
+        DFATimer.schedule(timerTask, 1000,100);
         return view;
     }
+
+
+
+    String validJsonData = "";
+    private static final Gson gson = new Gson();
+    public void receiveBLEData(String data){
+        Log.d("nRFUART", "Fragment: " + data);
+        validJsonData = validJsonData + data;
+        try {
+
+            gson.fromJson(validJsonData, WifiDevice.class);
+            Log.d("nRFUART", "Valid Json: " + validJsonData);
+
+            validJsonData = "";
+
+        } catch(com.google.gson.JsonSyntaxException ex) {
+            Log.d("nRFUART", "Invalid Json: " + validJsonData);
+        }
+    }
+
+
+
+    int timer_counter = 0;
+    int timer_flag = 0;
+
+    private void setTimer(int duration){
+        timer_flag = 0;
+        timer_counter = duration;
+    }
+
+    private void timerRun(){
+        if(timer_counter > 0){
+            timer_counter --;
+            if(timer_counter == 0)
+                timer_flag = 1;
+        }
+    }
+    int status = 0;
+    List<String> results = new ArrayList<>();
+    private void DFARun(){
+        switch (status){
+            case 0:
+                if(results.size() > 0) {
+                    sendBLEData(results.get(0));
+                    setTimer(3);
+                    status = 1;
+                    results.remove(0);
+                }
+                break;
+            case 1:
+                if(timer_flag == 1){
+                    status = 0;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void sendBLEData(String data){
+        //((MainActivity)getActivity()).sendMessage(2);
+        ((MainActivity)getActivity()).sendMessage(data);
+    }
+
+
     List<RegisterDevice> deviceListRegister;
     RegisterAdapter deviceAdapter;
     ListView newDevicesListRegisterView;
@@ -106,7 +201,7 @@ public class FragmentRegisterSetting extends Fragment {
 
         RegisterDevice secondDevice = new RegisterDevice();
         secondDevice.setData(new int[]{3, 3, 0, 1, 0, 1, 212, 40});
-        deviceListRegister.add(new RegisterDevice());
+        deviceListRegister.add(secondDevice);
         //deviceListRegister.add(new RegisterDevice());
 
         deviceAdapter.notifyDataSetChanged();

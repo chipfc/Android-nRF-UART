@@ -635,8 +635,8 @@ public class MainActivity extends FragmentActivity implements TextToSpeech.OnIni
 
                             }else if(currentFragmentClass == WIFI_FRAGMENT_INDEX){
                                 ((FragmentWifiSetting) fragment).receiveBLEData(text);
-                            }else{
-
+                            }else if (currentFragmentClass == REGISTER_FRAGMENT_INDEX){
+                                ((FragmentRegisterSetting) fragment).receiveBLEData(text);
                             }
 
 
