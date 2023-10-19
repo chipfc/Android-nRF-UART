@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.google.gson.Gson;
 
@@ -46,6 +47,7 @@ public class FragmentWifiSetting extends Fragment implements View.OnClickListene
     int timer_counter = 0;
     int timer_flag = 0;
     ImageButton btnBack, btnNext, btnRefresh;
+    TimePicker picker;
 
     private void setTimer(int duration){
         timer_flag = 0;
@@ -104,6 +106,10 @@ public class FragmentWifiSetting extends Fragment implements View.OnClickListene
         btnRefresh.setOnClickListener(this);
 
 
+        picker =(TimePicker)view.findViewById(R.id.timePicker);
+        picker.setIs24HourView(true);
+
+
         final Timer initTimer = new Timer();
         TimerTask aTask = new TimerTask() {
             @Override
@@ -124,14 +130,14 @@ public class FragmentWifiSetting extends Fragment implements View.OnClickListene
                 initTimer.cancel();
             }
         };
-        initTimer.schedule(aTask, 2000, 300000);
+        //initTimer.schedule(aTask, 2000, 300000);
 
 
         Timer DFATimer = new Timer();
         final TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                DFARun();
+                //DFARun();
                 timerRun();
             }
         };
@@ -175,6 +181,9 @@ public class FragmentWifiSetting extends Fragment implements View.OnClickListene
         } catch(com.google.gson.JsonSyntaxException ex) {
             Log.d("nRFUART", "Invalid Json: " + validJsonData);
             //Log.d("nRFUART", "Error: " + ex.getMessage());
+            int num = Integer.parseInt(data);
+            picker.setHour(num/60);
+            picker.setMinute(num%60);
         }
     }
     List<WifiDevice> deviceListWifi;
@@ -194,22 +203,41 @@ public class FragmentWifiSetting extends Fragment implements View.OnClickListene
         //newDevicesListView.setOnItemClickListener(mDeviceClickListener);
 
     }
-
+    int test_counter = 11;
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btnTest){
             validJsonData = "";
-            sendBLEData("{\"type\":0}");
+            sendBLEData("{\"type\":10}");
             deviceListWifi.clear();
             deviceAdapter.notifyDataSetChanged();
             //showPasswordDialog("123");
         }else if(view.getId() == R.id.btnBackWifi){
-            ((MainActivity)(getActivity())).selectFragment(BLE_FRAGMENT_INDEX);
+            //((MainActivity)(getActivity())).selectFragment(BLE_FRAGMENT_INDEX);
+
+            validJsonData = "";
+            test_counter = -1;
+            sendBLEData("{\"read\":" + test_counter + "}");
+            test_counter ++;
+            status_recv = 0;
+            deviceListWifi.clear();
+            deviceAdapter.notifyDataSetChanged();
+
         }else if(view.getId() == R.id.btnNextWifi){
-            ((MainActivity)(getActivity())).selectFragment(REGISTER_FRAGMENT_INDEX);
+            //((MainActivity)(getActivity())).selectFragment(REGISTER_FRAGMENT_INDEX);
+
+            validJsonData = "";
+            test_counter = picker.getHour() * 60 + picker.getMinute();
+            sendBLEData("{\"type\":" + test_counter + "}");
+            test_counter ++;
+            status_recv = 0;
+            deviceListWifi.clear();
+            deviceAdapter.notifyDataSetChanged();
         }else if(view.getId() == R.id.btnRefreshWifi){
             validJsonData = "";
-            sendBLEData("{\"type\":0}");
+            test_counter = 0;
+            sendBLEData("{\"type\":" + test_counter + "}");
+            test_counter ++;
             status_recv = 0;
             deviceListWifi.clear();
             deviceAdapter.notifyDataSetChanged();

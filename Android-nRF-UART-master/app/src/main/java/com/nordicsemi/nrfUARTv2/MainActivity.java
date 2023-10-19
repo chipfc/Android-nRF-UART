@@ -338,7 +338,9 @@ public class MainActivity extends FragmentActivity implements TextToSpeech.OnIni
                 fragmentClass = FragmentWifiSetting.class;
                 fragmentTag = "WifiSeting";
                 txtTitleCaption.setText("CÀI ĐẶT WIFI");
-                imgTitileIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.wifi_icon));
+                txtTitleCaption.setText("CÀI ĐẶT THỜI GIAN");
+                //imgTitileIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.wifi_icon));
+                imgTitileIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.clock_icon));
 
                 break;
             case REGISTER_FRAGMENT_INDEX:
@@ -625,11 +627,11 @@ public class MainActivity extends FragmentActivity implements TextToSpeech.OnIni
                         try {
                             //String text = new String(txValue, "UTF-8");
                             //Log.d("DCAR", "Received: " + text);
-                            //Log.d("DCAR", "Received: " + bytesToHex(txValue));
+                            Log.d("DCAR", "Received: " + bytesToHex(txValue));
 
                             String text = new String(txValue, "UTF-8");
-                            //Log.d(TAG, "Received: " + text);
-                            //Log.d(TAG, "Received: " + txValue.length);
+                            Log.d(TAG, "Received: " + text);
+                            Log.d(TAG, "Received: " + txValue.length);
 
                             if (currentFragmentClass ==  BLE_FRAGMENT_INDEX) {
 
