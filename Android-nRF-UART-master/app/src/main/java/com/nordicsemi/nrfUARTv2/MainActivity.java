@@ -337,8 +337,9 @@ public class MainActivity extends FragmentActivity implements TextToSpeech.OnIni
                 fragment_content.setVisibility(View.VISIBLE);
                 fragmentClass = FragmentWifiSetting.class;
                 fragmentTag = "WifiSeting";
-                txtTitleCaption.setText("CÀI ĐẶT WIFI");
-                txtTitleCaption.setText("CÀI ĐẶT THỜI GIAN");
+                txtTitleCaption.setText("MONITORING DATA");
+
+
                 //imgTitileIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.wifi_icon));
                 imgTitileIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.clock_icon));
 
@@ -629,6 +630,32 @@ public class MainActivity extends FragmentActivity implements TextToSpeech.OnIni
                             //Log.d("DCAR", "Received: " + text);
                             Log.d("DCAR", "Received: " + bytesToHex(txValue));
 
+                            for(int i = 0; i < txValue.length; i++){
+                                if(txValue[i] == 0x78){
+                                    int protocol = txValue[i + 1];
+                                    int datalengh = txValue[i+ 1 + 1];
+                                    //TODO
+                                    int[] ble_data = new int[datalengh];
+                                    for(int k  =0 ; k < ble_data.length; k++){
+                                        ble_data[k] = txValue[i + 1 + 1 + k + 1];
+                                    }
+                                    int crc1 = txValue[i + 1 + 1 + 1 + datalengh];
+                                    int crc2 = txValue[i + 1 + 1 + 1 + datalengh + 1];
+
+                                    int eoc = txValue[i + 1 + 1 + 1 + datalengh + 2];
+                                    Log.d("DCAR", "Parser: " + protocol + "**" + datalengh + "**" +
+                                          crc1 + "**" + crc2 + "**" + eoc);
+                                    if(protocol == 0x32){
+                                        //IMU Protocol
+                                        int gyroX = ble_data[0];
+                                        Log.d("DCAR", "GyroX: " + gyroX);
+                                        ((FragmentWifiSetting) fragment).updateData(ble_data);
+                                    }
+                                }
+                            }
+
+
+
                             String text = new String(txValue, "UTF-8");
                             Log.d(TAG, "Received: " + text);
                             Log.d(TAG, "Received: " + txValue.length);
@@ -636,9 +663,10 @@ public class MainActivity extends FragmentActivity implements TextToSpeech.OnIni
                             if (currentFragmentClass ==  BLE_FRAGMENT_INDEX) {
 
                             }else if(currentFragmentClass == WIFI_FRAGMENT_INDEX){
-                                ((FragmentWifiSetting) fragment).receiveBLEData(text);
+                                //((FragmentWifiSetting) fragment).receiveBLEData(text);
+
                             }else if (currentFragmentClass == REGISTER_FRAGMENT_INDEX){
-                                ((FragmentRegisterSetting) fragment).receiveBLEData(text);
+                                //((FragmentRegisterSetting) fragment).receiveBLEData(text);
                             }
 
 

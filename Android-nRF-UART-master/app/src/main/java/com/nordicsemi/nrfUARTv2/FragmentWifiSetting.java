@@ -48,6 +48,8 @@ public class FragmentWifiSetting extends Fragment implements View.OnClickListene
     int timer_flag = 0;
     ImageButton btnBack, btnNext, btnRefresh;
     TimePicker picker;
+    TextView txtGyroX, txtGyroY, txtGyroZ;
+    TextView txtAccelX, txtAccelY, txtAccelZ;
 
     private void setTimer(int duration){
         timer_flag = 0;
@@ -144,6 +146,17 @@ public class FragmentWifiSetting extends Fragment implements View.OnClickListene
         DFATimer.schedule(timerTask, 1000,100);
 
         results.clear();
+
+        txtGyroX = view.findViewById(R.id.txtGyroX);
+        txtGyroY = view.findViewById(R.id.txtGyroY);
+        txtGyroZ = view.findViewById(R.id.txtGyroZ);
+
+
+        txtAccelX = view.findViewById(R.id.txtAccelX);
+        txtAccelY = view.findViewById(R.id.txtAccelY);
+        txtAccelZ = view.findViewById(R.id.txtAccelZ);
+
+
         return view;
     }
 
@@ -396,6 +409,19 @@ public class FragmentWifiSetting extends Fragment implements View.OnClickListene
 
         } catch (Throwable t) {
             //Log.e(TAG, "create QR code fail. ");
+        }
+    }
+    public void updateData(int[] data){
+        if(data.length >=6){
+            txtGyroX.setText(data[0] + "");
+            txtGyroY.setText(data[1] + "");
+            txtGyroZ.setText(data[2] + "");
+
+
+            txtAccelX.setText(data[3] + "");
+            txtAccelY.setText(data[4] + "");
+            txtAccelZ.setText(data[5] + "");
+
         }
     }
 
