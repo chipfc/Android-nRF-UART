@@ -628,14 +628,14 @@ public class MainActivity extends FragmentActivity implements TextToSpeech.OnIni
                         try {
                             //String text = new String(txValue, "UTF-8");
                             //Log.d("DCAR", "Received: " + text);
-                            Log.d("DCAR", "Received: " + bytesToHex(txValue));
 
+                            //Log.d("DCAR", "Received: " + bytesToHex(txValue));
                             for(int i = 0; i < txValue.length; i++){
                                 if(txValue[i] == 0x78){
                                     int protocol = txValue[i + 1];
                                     int datalengh = txValue[i+ 1 + 1];
                                     //TODO
-                                    int[] ble_data = new int[datalengh];
+                                    byte[] ble_data = new byte[datalengh];
                                     for(int k  =0 ; k < ble_data.length; k++){
                                         ble_data[k] = txValue[i + 1 + 1 + k + 1];
                                     }
@@ -643,13 +643,17 @@ public class MainActivity extends FragmentActivity implements TextToSpeech.OnIni
                                     int crc2 = txValue[i + 1 + 1 + 1 + datalengh + 1];
 
                                     int eoc = txValue[i + 1 + 1 + 1 + datalengh + 2];
-                                    Log.d("DCAR", "Parser: " + protocol + "**" + datalengh + "**" +
-                                          crc1 + "**" + crc2 + "**" + eoc);
+//                                    Log.d("DCAR", "Parser: " + protocol + "**" + datalengh + "**" +
+//                                          crc1 + "**" + crc2 + "**" + eoc);
                                     if(protocol == 0x32){
                                         //IMU Protocol
                                         int gyroX = ble_data[0];
-                                        Log.d("DCAR", "GyroX: " + gyroX);
-                                        ((FragmentWifiSetting) fragment).updateData(ble_data);
+                                        //Log.d("DCAR", "GyroX: " + gyroX);
+                                        ((FragmentWifiSetting) fragment).updateIMUData(ble_data);
+                                    }
+                                    if(protocol == 0x35){
+
+                                        ((FragmentWifiSetting) fragment).updateDistanceData(ble_data);
                                     }
                                 }
                             }

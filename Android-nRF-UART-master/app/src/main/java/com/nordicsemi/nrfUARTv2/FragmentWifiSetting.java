@@ -50,6 +50,7 @@ public class FragmentWifiSetting extends Fragment implements View.OnClickListene
     TimePicker picker;
     TextView txtGyroX, txtGyroY, txtGyroZ;
     TextView txtAccelX, txtAccelY, txtAccelZ;
+    TextView txtDistance;
 
     private void setTimer(int duration){
         timer_flag = 0;
@@ -156,6 +157,7 @@ public class FragmentWifiSetting extends Fragment implements View.OnClickListene
         txtAccelY = view.findViewById(R.id.txtAccelY);
         txtAccelZ = view.findViewById(R.id.txtAccelZ);
 
+        txtDistance = view.findViewById(R.id.txtDistance);
 
         return view;
     }
@@ -411,7 +413,7 @@ public class FragmentWifiSetting extends Fragment implements View.OnClickListene
             //Log.e(TAG, "create QR code fail. ");
         }
     }
-    public void updateData(int[] data){
+    public void updateIMUData(byte[] data){
         if(data.length >=6){
             txtGyroX.setText(data[0] + "");
             txtGyroY.setText(data[1] + "");
@@ -422,6 +424,35 @@ public class FragmentWifiSetting extends Fragment implements View.OnClickListene
             txtAccelY.setText(data[4] + "");
             txtAccelZ.setText(data[5] + "");
 
+        }
+    }
+    public long getUnsignedInt(int x) {
+        return x & (-1L >>> 32);
+    }
+    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+    public void updateDistanceData(byte[] data){
+        if(data.length >= 4){
+
+            int V0 = data[0] & 0xFF;
+            int V1 = data[1] & 0xFF;
+            int V2 = data[2] & 0xFF;
+            int V3 = data[3] & 0xFF;
+
+            int distance = V3 + (V2 << 8) + (V1 << 16) + (V0 << 24);
+            double value = Float.intBitsToFloat(distance) ;
+            //Log.d("DCAR", "Data " + data[0] + "**" + data[1] + "**" + data[2] + "**" + data[3]);
+            //Log.d("DCAR", "Distance is "  + bytesToHex(data));
+
+            txtDistance.setText( String.format("%.2f", value));
         }
     }
 
